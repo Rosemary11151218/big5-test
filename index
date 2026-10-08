@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>大五人格简版测评</title>
+<style>
+*{box-sizing:border-box;font-family:system-ui}
+.container{max-width:700px;margin:40px auto;padding:0 20px}
+.question{margin:24px 0}
+.q-title{font-weight:500;margin-bottom:10px}
+.opts{display:flex;gap:6px;flex-wrap:wrap}
+label{padding:6px 10px;border:1px solid #ccc;border-radius:6px;cursor:pointer}
+.result{display:none;padding:24px;background:#eef7ff;border-radius:12px;margin-top:30px}
+.submit-btn{padding:12px 24px;background:#2563eb;color:#fff;border:none;border-radius:8px;font-size:16px;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="container">
+    <h2>大五人格简版测评</h2>
+    <p>请根据真实情况选择：1=非常不同意，2=不太同意，3=中立，4=比较同意，5=非常同意</p>
+    <form id="bigfiveForm" action="https://api.web3forms.com/submit" method="POST">
+        <input type="hidden" name="access_key" value="2f37f6dc-684c-48f5-804b-38ffdb29ce2f">
+        <input type="hidden" name="subject" value="大五人格新答卷">
+
+        <!-- 大五简版10题 -->
+        <div class="question">
+            <div class="q-title">1. 我外向、善于社交</div>
+            <div class="opts">
+                <label><input type="radio" name="q1" value="1" required>1</label>
+                <label><input type="radio" name="q1" value="2">2</label>
+                <label><input type="radio" name="q1" value="3">3</label>
+                <label><input type="radio" name="q1" value="4">4</label>
+                <label><input type="radio" name="q1" value="5">5</label>
+            </div>
+        </div>
+        <div class="question">
+            <div class="q-title">2. 我常常挑剔别人</div>
+            <div class="opts">
+                <label><input type="radio" name="q2" value="1" required>1</label>
+                <label><input type="radio" name="q2" value="2">2</label>
+                <label><input type="radio" name="q2" value="3">3</label>
+                <label><input type="radio" name="q2" value="4">4</label>
+                <label><input type="radio" name="q2" value="5">5</label>
+            </div>
+        </div>
+        <div class="question">
+            <div class="q-title">3. 我做事可靠、有条理</div>
+            <div class="opts">
+                <label><input type="radio" name="q3" value="1" required>1</label>
+                <label><input type="radio" name="q3" value="2">2</label>
+                <label><input type="radio" name="q3" value="3">3</label>
+                <label><input type="radio" name="q3" value="4">4</label>
+                <label><input type="radio" name="q3" value="5">5</label>
+            </div>
+        </div>
+        <div class="question">
+            <div class="q-title">4. 我容易紧张、情绪波动大</div>
+            <div class="opts">
+                <label><input type="radio" name="q4" value="1" required>1</label>
+                <label><input type="radio" name="q4" value="2">2</label>
+                <label><input type="radio" name="q4" value="3">3</label>
+                <label><input type="radio" name="q4" value="4">4</label>
+                <label><input type="radio" name="q4" value="5">5</label>
+            </div>
+        </div>
+        <div class="question">
+            <div class="q-title">5. 我对新鲜事物充满好奇</div>
+            <div class="opts">
+                <label><input type="radio" name="q5" value="1" required>1</label>
+                <label><input type="radio" name="q5" value="2">2</label>
+                <label><input type="radio" name="q5" value="3">3</label>
+                <label><input type="radio" name="q5" value="4">4</label>
+                <label><input type="radio" name="q5" value="5">5</label>
+            </div>
+        </div>
+        <div class="question">
+            <div class="q-title">6. 我内向、喜欢独处</div>
+            <div class="opts">
+                <label><input type="radio" name="q6" value="1" required>1</label>
+                <label><input type="radio" name="q6" value="2">2</label>
+                <label><input type="radio" name="q6" value="3">3</label>
+                <label><input type="radio" name="q6" value="4">4</label>
+                <label><input type="radio" name="q6" value="5">5</label>
+            </div>
+        </div>
+        <div class="question">
+            <div class="q-title">7. 我待人谦和、体谅他人</div>
+            <div class="opts">
+                <label><input type="radio" name="q7" value="1" required>1</label>
+                <label><input type="radio" name="q7" value="2">2</label>
+                <label><input type="radio" name="q7" value="3">3</label>
+                <label><input type="radio" name="q7" value="4">4</label>
+                <label><input type="radio" name="q7" value="5">5</label>
+            </div>
+        </div>
+        <div class="question">
+            <div class="q-title">8. 我做事比较懒散随性</div>
+            <div class="opts">
+                <label><input type="radio" name="q8" value="1" required>1</label>
+                <label><input type="radio" name="q8" value="2">2</label>
+                <label><input type="radio" name="q8" value="3">3</label>
+                <label><input type="radio" name="q8" value="4">4</label>
+                <label><input type="radio" name="q8" value="5">5</label>
+            </div>
+        </div>
+        <div class="question">
+            <div class="q-title">9. 我情绪稳定，不容易焦虑</div>
+            <div class="opts">
+                <label><input type="radio" name="q9" value="1" required>1</label>
+                <label><input type="radio" name="q9" value="2">2</label>
+                <label><input type="radio" name="q9" value="3">3</label>
+                <label><input type="radio" name="q9" value="4">4</label>
+                <label><input type="radio" name="q9" value="5">5</label>
+            </div>
+        </div>
+        <div class="question">
+            <div class="q-title">10. 我思想保守，不喜欢新奇想法</div>
+            <div class="opts">
+                <label><input type="radio" name="q10" value="1" required>1</label>
+                <label><input type="radio" name="q10" value="2">2</label>
+                <label><input type="radio" name="q10" value="3">3</label>
+                <label><input type="radio" name="q10" value="4">4</label>
+                <label><input type="radio" name="q10" value="5">5</label>
+            </div>
+        </div>
+
+        <br>
+        <button class="submit-btn" type="submit">提交并查看测评结果</button>
+    </form>
+
+    <div class="result" id="resultBox">
+        <h3>✅你的大五人格结果</h3>
+        <p id="resText"></p>
+    </div>
+</div>
+
+<script>
+const form = document.getElementById('bigfiveForm');
+form.addEventListener('submit', function(e){
+    e.preventDefault();
+    const fd = new FormData(form);
+    // 获取每题分数
+    const q1 = Number(fd.get('q1'));
+    const q2 = Number(fd.get('q2'));
+    const q3 = Number(fd.get('q3'));
+    const q4 = Number(fd.get('q4'));
+    const q5 = Number(fd.get('q5'));
+    const q6 = Number(fd.get('q6'));
+    const q7 = Number(fd.get('q7'));
+    const q8 = Number(fd.get('q8'));
+    const q9 = Number(fd.get('q9'));
+    const q10 = Number(fd.get('q10'));
+
+    // 反向计分
+    const E = q1 + (6 - q6); //外向
+    const A = (6 - q2) + q7; //宜人性
+    const C = q3 + (6 - q8); //尽责性
+    const N = q4 + (6 - q9); //神经质
+    const O = q5 + (6 - q10);//开放性
+
+    const txt = `
+外向(E):${E}/10<br>
+宜人性(A):${A}/10<br>
+尽责性(C):${C}/10<br>
+神经质(N):${N}/10<br>
+开放性(O):${O}/10<br><br>
+解读：<br>
+• 外向：分数越高越爱社交、热情；低分偏安静内敛<br>
+• 宜人性：越高越友善共情；低分更直接、竞争导向<br>
+• 尽责性：越高自律有条理；低分随性灵活<br>
+• 神经质：越高更容易敏感焦虑；低分情绪稳定<br>
+• 开放性：越高喜欢新想法；低分偏好传统稳定
+    `;
+    document.getElementById('resText').innerHTML = txt;
+    document.getElementById('resultBox').style.display="block";
+
+    // 发送数据到web3forms后台
+    fetch(form.action,{method:form.method, body:fd})
+    .then(res=>res.json())
+    .then(data=>{
+        console.log("提交成功",data);
+    })
+    .catch(err=>console.log(err))
+})
+</script>
+</body>
+</html>
