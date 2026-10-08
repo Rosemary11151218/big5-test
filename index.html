@@ -151,7 +151,7 @@
                 <div id="progressBar" class="progress-inner"></div>
             </div>
         </div>
-        <form id="big5Form" action="https://api.web3forms.com/submit" method="POST">
+        <form id="big5Form">
             <input type="hidden" name="access_key" value="2f37f6dc-684c-48f5-804b-38ffdb29ce2f">
             <input type="hidden" name="subject" value="新的大五人格测评答卷">
 
@@ -291,16 +291,17 @@
     const alertTip = document.getElementById("alertTip");
     let radarChart;
 
-    form.addEventListener("submit", function(e){
+    form.addEventListener("submit", async function(e){
+        e.preventDefault(); //阻止原生表单跳转（关键！）
         const allAnswered = document.querySelectorAll('input[type="radio"]:checked').length === 10;
         if(!allAnswered){
-            e.preventDefault();
             alertTip.style.display="block";
             return;
         }
         alertTip.style.display="none";
 
         //收集作答
+        const formData = new FormData(form);
         const q = {};
         for(let i=1;i<=10;i++){
             q["Q"+i] = Number(document.querySelector(`input[name="Q${i}"]:checked`).value);
@@ -313,15 +314,21 @@
         const N = (6 - q.Q4) + q.Q9;
         const O = q.Q5 + (6 - q.Q10);
 
-        //表单提交完成后，渲染结果
-        form.addEventListener('submit', function afterSubmit(ev){
-            setTimeout(()=>{
-                surveyBox.style.display="none";
-                resultBox.style.display="block";
-                drawChart(E,A,C,N,O);
-                fillText(E,A,C,N,O);
-            },300)
-        }, {once:true})
+        try{
+            //异步提交给Web3Forms，不会跳转页面
+            await fetch("https://api.web3forms.com/submit",{
+                method:"POST",
+                body:formData
+            })
+        }catch(err){
+            console.log("提交完成",err);
+        }
+
+        //渲染雷达图结果
+        surveyBox.style.display="none";
+        resultBox.style.display="block";
+        drawChart(E,A,C,N,O);
+        fillText(E,A,C,N,O);
     })
 
     function drawChart(E,A,C,N,O){
