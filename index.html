@@ -645,7 +645,6 @@ form.addEventListener("submit",async function(e){
         return;
     }
     alertTip.style.display="none";
-    loadingTip.style.display="block";
 
     //收集全部作答
     const dataObj = {
@@ -662,7 +661,7 @@ form.addEventListener("submit",async function(e){
     }
     for(let i=1;i<=15;i++) dataObj[`pdp_${i}`] = Number(document.querySelector(`input[name="pdp_${i}"]:checked`).value);
 
-    //BFI‑2‑XS计分规则
+    //BFI‑2‑XS计分
     const b = dataObj;
     const Extra = (6-b.bfi_1)+b.bfi_6+b.bfi_11+b.bfi_16+(6-b.bfi_21)+(6-b.bfi_26);
     const Agree = b.bfi_2+(6-b.bfi_7)+b.bfi_12+(6-b.bfi_17)+b.bfi_22+(6-b.bfi_27);
@@ -670,5 +669,12 @@ form.addEventListener("submit",async function(e){
     const Neuro = b.bfi_4+b.bfi_9+(6-b.bfi_14)+(6-b.bfi_19)+(6-b.bfi_24)+b.bfi_29;
     const Open = b.bfi_5+(6-b.bfi_10)+b.bfi_15+(6-b.bfi_20)+b.bfi_25+(6-b.bfi_30);
 
-    //自我验证追求总分
-    let sv
+    //自我验证追求
+    let svSum=0;
+    for(let i=1;i<=8;i++) svSum += dataObj[`sv_${i}`];
+
+    //调节焦点
+    let promoSum=0,prevSum=0;
+    for(let i=1;i<=4;i++){
+        promoSum += dataObj[`promo_${i}`];
+        prevSum += dataObj[`prev_
