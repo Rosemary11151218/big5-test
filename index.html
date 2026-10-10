@@ -24,7 +24,7 @@ h3{color:#34495e;font-size:17px;margin:16px 0 8px 0;}
 .radio-opt{flex:1;min-width:72px;}
 .radio-opt label{display:block;text-align:center;padding:9px 2px;border:1px solid #cbd5e0;border-radius:8px;cursor:pointer;font-size:14px;transition:0.2s;user-select:none;}
 .radio-opt label:has(input:checked){background:#407bff;color:#fff;border-color:#407bff;}
-.radio-opt input{margin:0 4px 0 0;}
+.radio-opt input{display:none;}
 .text-input-row{margin-bottom:16px;}
 .text-input-row label{display:block;margin-bottom:4px;color:#2d3748;}
 .text-input-row input{width:100%;padding:10px;border:1px solid #cbd5e0;border-radius:8px;font-size:15px;}
@@ -48,11 +48,11 @@ h3{color:#34495e;font-size:17px;margin:16px 0 8px 0;}
 
 <div class="text-input-row">
     <label>班级</label>
-    <input type="text" name="className" id="className" placeholder="请输入你的班级" required>
+    <input type="text" id="className" placeholder="请输入你的班级" required>
 </div>
 <div class="text-input-row">
     <label>学号</label>
-    <input type="text" name="studentId" id="studentId" placeholder="请输入你的学号" required>
+    <input type="text" id="studentId" placeholder="请输入你的学号" required>
 </div>
 
 <div class="progress-wrap">
@@ -579,7 +579,6 @@ h3{color:#34495e;font-size:17px;margin:16px 0 8px 0;}
 </div>
 
 <script>
-//PDP动物画像文本，严格复制文档
 const pdpText = {
 "老虎型｜目标推进者":`你是一个目标感很强的人，做事果断、直接，遇到问题时更倾向于快速判断、推动结果。你不太喜欢拖延和模糊不清的安排，通常愿意承担责任，也能在关键时刻做决定。需要注意的是，你的高效率和强推进力有时会让别人感到压力，因此在表达要求时，可以多留意他人的感受和节奏。`,
 "孔雀型｜表达影响者":`你擅长表达，也容易带动现场气氛。你热情、外向，喜欢与人互动，能够通过语言、情绪和感染力影响他人。你通常适合承担展示、沟通、协调和激励团队的角色。需要注意的是，你有时可能会更关注想法和氛围，而忽略细节、执行和后续落地，因此可以搭配更清晰的计划来增强结果感。`,
@@ -588,7 +587,6 @@ const pdpText = {
 "变色龙型｜弹性整合者":`你适应性强，能够根据不同情境调整自己的沟通方式和行动策略。你擅长理解不同人的立场，也能在分歧中寻找平衡点，帮助团队整合意见。你的优势在于灵活、协调和连接。需要注意的是，你有时可能为了适应环境而弱化自己的立场，因此在关键问题上，可以更清楚地表达边界和原则。`
 };
 
-//动物图片文件名映射（你上传到github根目录的png）
 const animalImgMap = {
 "老虎型｜目标推进者":"tiger.png",
 "孔雀型｜表达影响者":"peacock.png",
@@ -597,7 +595,6 @@ const animalImgMap = {
 "变色龙型｜弹性整合者":"chameleon.png"
 };
 
-//进度统计
 const radios = document.querySelectorAll('input[type="radio"]');
 const progressNum = document.getElementById("progressNum");
 const progressBar = document.getElementById("progressBar");
@@ -638,7 +635,7 @@ function drawRadar(extra,agree,consc,neuro,open){
 }
 
 form.addEventListener("submit",async function(e){
-    e.preventDefault();
+    e.preventDefault(); //【最重要！阻止原生表单跳转】
     const className = document.getElementById("className").value.trim();
     const studentId = document.getElementById("studentId").value.trim();
     const checkedCount = document.querySelectorAll('input[type="radio"]:checked').length;
@@ -650,7 +647,7 @@ form.addEventListener("submit",async function(e){
     alertTip.style.display="none";
     loadingTip.style.display="block";
 
-    //收集作答
+    //收集全部作答
     const dataObj = {
         access_key:"2f37f6dc-684c-48f5-804b-38ffdb29ce2f",
         subject:"综合性格测评新答卷",
@@ -665,8 +662,9 @@ form.addEventListener("submit",async function(e){
     }
     for(let i=1;i<=15;i++) dataObj[`pdp_${i}`] = Number(document.querySelector(`input[name="pdp_${i}"]:checked`).value);
 
-    //BFI‑2‑XS计分
+    //BFI‑2‑XS计分规则
     const b = dataObj;
     const Extra = (6-b.bfi_1)+b.bfi_6+b.bfi_11+b.bfi_16+(6-b.bfi_21)+(6-b.bfi_26);
     const Agree = b.bfi_2+(6-b.bfi_7)+b.bfi_12+(6-b.bfi_17)+b.bfi_22+(6-b.bfi_27);
-    const Consc = (6-b.bfi_3)+(6-b.bfi_8)+b.bfi_13
+    const Consc = (6-b.bfi_3)+(6-b.bfi_8)+b.bfi_13+b.bfi_18+b.bfi_23+(6-b.bfi_28);
+    const Neuro = b.bfi_4+b.bfi_9+(6-b.bfi_
