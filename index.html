@@ -1,369 +1,680 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>大五人格简版测评（BFI-10）</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: "Microsoft Yahei", system-ui, sans-serif;
-        }
-        body {
-            background-color: #f4f7fa;
-            padding: 30px 15px;
-        }
-        .container {
-            max-width:820px;
-            margin: 0 auto;
-        }
-        .card {
-            background: #ffffff;
-            border-radius:18px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.07);
-            padding:36px;
-            margin-bottom:24px;
-        }
-        h1 {
-            text-align:center;
-            color:#2c3e50;
-            font-size:28px;
-            margin-bottom:12px;
-        }
-        .desc {
-            text-align:center;
-            color:#555;
-            margin-bottom:32px;
-            line-height:1.6;
-        }
-        .progress-wrap{
-            margin-bottom:28px;
-        }
-        .progress-text{
-            display:flex;
-            justify-content:space-between;
-            color:#666;
-            font-size:14px;
-            margin-bottom:6px;
-        }
-        .progress-bar{
-            width:100%;
-            height:8px;
-            background:#e9ecef;
-            border-radius:99px;
-            overflow:hidden;
-        }
-        .progress-inner{
-            height:100%;
-            width:0%;
-            background:#407bff;
-            transition: 0.3s ease;
-        }
-        .question-item{
-            padding:20px;
-            border:1px solid #edf1f7;
-            border-radius:12px;
-            margin-bottom:16px;
-        }
-        .q-title{
-            font-size:16px;
-            color:#2d3748;
-            margin-bottom:14px;
-            line-height:1.6;
-        }
-        .radio-group{
-            display:flex;
-            flex-wrap:wrap;
-            gap:10px;
-        }
-        .radio-option{
-            flex:1;
-            min-width:90px;
-        }
-        .radio-option label{
-            display:block;
-            text-align:center;
-            padding:8px 4px;
-            border:1px solid #cbd5e0;
-            border-radius:8px;
-            cursor:pointer;
-            transition:0.2s;
-            font-size:14px;
-        }
-        .radio-option input:checked + label{
-            background:#407bff;
-            color:white;
-            border-color:#407bff;
-        }
-        .radio-option input{
-            display:none;
-        }
-        .submit-btn{
-            width:100%;
-            padding:14px;
-            border:none;
-            background:#407bff;
-            color:white;
-            font-size:18px;
-            border-radius:12px;
-            cursor:pointer;
-            transition:0.2s;
-            margin-top:12px;
-        }
-        .submit-btn:hover{
-            background:#2b62d9;
-        }
-        .result-box{
-            display:none;
-        }
-        .chart-wrap{
-            max-width:520px;
-            margin:20px auto 30px;
-        }
-        .dimension-text{
-            margin-top:20px;
-            line-height:1.8;
-            color:#333;
-        }
-        .alert-empty{
-            color:#e53e3e;
-            margin-top:12px;
-            text-align:center;
-            display:none;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>综合性格测评问卷</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+*{box-sizing:border-box;font-family:"Microsoft Yahei",system-ui,sans-serif;}
+body{background:#f4f7fa;padding:24px 14px;}
+.container{max-width:860px;margin:0 auto;}
+.card{background:#fff;border-radius:18px;box-shadow:0 4px 20px rgba(0,0,0,0.07);padding:32px;margin-bottom:24px;}
+h1{text-align:center;color:#2c3e50;font-size:26px;margin-bottom:10px;}
+h2{color:#2c3e50;font-size:20px;margin:28px 0 12px 0;border-left:4px solid #407bff;padding-left:10px;}
+h3{color:#34495e;font-size:17px;margin:16px 0 8px 0;}
+.desc{text-align:center;color:#555;margin-bottom:24px;line-height:1.6;font-size:14px;}
+.progress-wrap{margin-bottom:20px;}
+.progress-text{display:flex;justify-content:space-between;color:#666;font-size:14px;margin-bottom:6px;}
+.progress-bar{width:100%;height:8px;background:#e9ecef;border-radius:99px;overflow:hidden;}
+.progress-inner{height:100%;width:0%;background:#407bff;transition:0.3s ease;}
+.q-item{padding:18px;border:1px solid #edf1f7;border-radius:12px;margin-bottom:14px;}
+.q-title{font-size:15px;color:#2d3748;margin-bottom:10px;line-height:1.6;}
+.radio-group{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
+.radio-opt{flex:1;min-width:72px;}
+.radio-opt label{display:block;text-align:center;padding:9px 2px;border:1px solid #cbd5e0;border-radius:8px;cursor:pointer;font-size:14px;transition:0.2s;user-select:none;}
+.radio-opt label:has(input:checked){background:#407bff;color:#fff;border-color:#407bff;}
+.radio-opt input{margin:0 4px 0 0;}
+.text-input-row{margin-bottom:16px;}
+.text-input-row label{display:block;margin-bottom:4px;color:#2d3748;}
+.text-input-row input{width:100%;padding:10px;border:1px solid #cbd5e0;border-radius:8px;font-size:15px;}
+.submit-btn{width:100%;padding:14px;border:none;background:#407bff;color:#fff;font-size:17px;border-radius:12px;cursor:pointer;margin-top:16px;}
+.submit-btn:hover{background:#2b62d9;}
+.alert-tip{color:#e53e3e;text-align:center;margin-top:10px;display:none;}
+.loading-tip{color:#407bff;text-align:center;margin-top:8px;display:none;}
+.result-box{display:none;}
+.result-block{background:#f7f9fc;padding:20px;border-radius:12px;margin-bottom:20px;}
+.result-block h3{margin-bottom:10px;color:#2c3e50;}
+.chart-wrap{max-width:540px;margin:16px auto 24px;}
+</style>
 </head>
 <body>
 <div class="container">
-    <!--问卷区域-->
-    <div id="surveyBox" class="card">
-        <h1>大五人格测评（BFI-10 简版量表）</h1>
-        <p class="desc">请根据您自身真实情况选择符合程度，1=非常不同意，5=非常同意<br>完成后提交，将立即生成您的人格测评结果</p>
-        <div class="progress-wrap">
-            <div class="progress-text">
-                <span>作答进度</span>
-                <span id="progressNum">0/10</span>
-            </div>
-            <div class="progress-bar">
-                <div id="progressBar" class="progress-inner"></div>
-            </div>
-        </div>
-        <form id="big5Form">
-            <input type="hidden" name="access_key" value="2f37f6dc-684c-48f5-804b-38ffdb29ce2f">
-            <input type="hidden" name="subject" value="新的大五人格测评答卷">
+<div id="surveyBox" class="card">
+<h1>综合性格测评问卷</h1>
+<p class="desc">注意：本测试用于课堂互动与团队沟通讨论，不等同于正式测评或心理诊断。<br>
+请根据真实情况选择：1=非常不同意，2=不太同意，3=中立，4=比较同意，5=非常同意</p>
 
-            <div class="question-item">
-                <div class="q-title">Q1. 我是一个外向、热情的人</div>
-                <div class="radio-group">
-                    <div class="radio-option"><input type="radio" id="q1-1" name="Q1" value="1" required><label for="q1-1">1非常不同意</label></div>
-                    <div class="radio-option"><input type="radio" id="q1-2" name="Q1" value="2"><label for="q1-2">2不太同意</label></div>
-                    <div class="radio-option"><input type="radio" id="q1-3" name="Q1" value="3"><label for="q1-3">3中立</label></div>
-                    <div class="radio-option"><input type="radio" id="q1-4" name="Q1" value="4"><label for="q1-4">4比较同意</label></div>
-                    <div class="radio-option"><input type="radio" id="q1-5" name="Q1" value="5"><label for="q1-5">5非常同意</label></div>
-                </div>
-            </div>
-            <div class="question-item">
-                <div class="q-title">Q2. 我倾向于挑剔、和人争辩</div>
-                <div class="radio-group">
-                    <div class="radio-option"><input type="radio" id="q2-1" name="Q2" value="1" required><label for="q2-1">1非常不同意</label></div>
-                    <div class="radio-option"><input type="radio" id="q2-2" name="Q2" value="2"><label for="q2-2">2不太同意</label></div>
-                    <div class="radio-option"><input type="radio" id="q2-3" name="Q2" value="3"><label for="q2-3">3中立</label></div>
-                    <div class="radio-option"><input type="radio" id="q2-4" name="Q2" value="4"><label for="q2-4">4比较同意</label></div>
-                    <div class="radio-option"><input type="radio" id="q2-5" name="Q2" value="5"><label for="q2-5">5非常同意</label></div>
-                </div>
-            </div>
-            <div class="question-item">
-                <div class="q-title">Q3. 我是一个可靠自律的人</div>
-                <div class="radio-group">
-                    <div class="radio-option"><input type="radio" id="q3-1" name="Q3" value="1" required><label for="q3-1">1非常不同意</label></div>
-                    <div class="radio-option"><input type="radio" id="q3-2" name="Q3" value="2"><label for="q3-2">2不太同意</label></div>
-                    <div class="radio-option"><input type="radio" id="q3-3" name="Q3" value="3"><label for="q3-3">3中立</label></div>
-                    <div class="radio-option"><input type="radio" id="q3-4" name="Q3" value="4"><label for="q3-4">4比较同意</label></div>
-                    <div class="radio-option"><input type="radio" id="q3-5" name="Q3" value="5"><label for="q3-5">5非常同意</label></div>
-                </div>
-            </div>
-            <div class="question-item">
-                <div class="q-title">Q4. 我容易紧张、情绪不稳定</div>
-                <div class="radio-group">
-                    <div class="radio-option"><input type="radio" id="q4-1" name="Q4" value="1" required><label for="q4-1">1非常不同意</label></div>
-                    <div class="radio-option"><input type="radio" id="q4-2" name="Q4" value="2"><label for="q4-2">2不太同意</label></div>
-                    <div class="radio-option"><input type="radio" id="q4-3" name="Q4" value="3"><label for="q4-3">3中立</label></div>
-                    <div class="radio-option"><input type="radio" id="q4-4" name="Q4" value="4"><label for="q4-4">4比较同意</label></div>
-                    <div class="radio-option"><input type="radio" id="q4-5" name="Q4" value="5"><label for="q4-5">5非常同意</label></div>
-                </div>
-            </div>
-            <div class="question-item">
-                <div class="q-title">Q5. 我对新想法充满好奇</div>
-                <div class="radio-group">
-                    <div class="radio-option"><input type="radio" id="q5-1" name="Q5" value="1" required><label for="q5-1">1非常不同意</label></div>
-                    <div class="radio-option"><input type="radio" id="q5-2" name="Q5" value="2"><label for="q5-2">2不太同意</label></div>
-                    <div class="radio-option"><input type="radio" id="q5-3" name="Q5" value="3"><label for="q5-3">3中立</label></div>
-                    <div class="radio-option"><input type="radio" id="q5-4" name="Q5" value="4"><label for="q5-4">4比较同意</label></div>
-                    <div class="radio-option"><input type="radio" id="q5-5" name="Q5" value="5"><label for="q5-5">5非常同意</label></div>
-                </div>
-            </div>
-            <div class="question-item">
-                <div class="q-title">Q6. 我偏安静、内向</div>
-                <div class="radio-group">
-                    <div class="radio-option"><input type="radio" id="q6-1" name="Q6" value="1" required><label for="q6-1">1非常不同意</label></div>
-                    <div class="radio-option"><input type="radio" id="q6-2" name="Q6" value="2"><label for="q6-2">2不太同意</label></div>
-                    <div class="radio-option"><input type="radio" id="q6-3" name="Q6" value="3"><label for="q6-3">3中立</label></div>
-                    <div class="radio-option"><input type="radio" id="q6-4" name="Q6" value="4"><label for="q6-4">4比较同意</label></div>
-                    <div class="radio-option"><input type="radio" id="q6-5" name="Q6" value="5"><label for="q6-5">5非常同意</label></div>
-                </div>
-            </div>
-            <div class="question-item">
-                <div class="q-title">Q7. 我倾向于体谅、关心他人</div>
-                <div class="radio-group">
-                    <div class="radio-option"><input type="radio" id="q7-1" name="Q7" value="1" required><label for="q7-1">1非常不同意</label></div>
-                    <div class="radio-option"><input type="radio" id="q7-2" name="Q7" value="2"><label for="q7-2">2不太同意</label></div>
-                    <div class="radio-option"><input type="radio" id="q7-3" name="Q7" value="3"><label for="q7-3">3中立</label></div>
-                    <div class="radio-option"><input type="radio" id="q7-4" name="Q7" value="4"><label for="q7-4">4比较同意</label></div>
-                    <div class="radio-option"><input type="radio" id="q7-5" name="Q7" value="5"><label for="q7-5">5非常同意</label></div>
-                </div>
-            </div>
-            <div class="question-item">
-                <div class="q-title">Q8. 我做事比较粗心</div>
-                <div class="radio-group">
-                    <div class="radio-option"><input type="radio" id="q8-1" name="Q8" value="1" required><label for="q8-1">1非常不同意</label></div>
-                    <div class="radio-option"><input type="radio" id="q8-2" name="Q8" value="2"><label for="q8-2">2不太同意</label></div>
-                    <div class="radio-option"><input type="radio" id="q8-3" name="Q8" value="3"><label for="q8-3">3中立</label></div>
-                    <div class="radio-option"><input type="radio" id="q8-4" name="Q8" value="4"><label for="q8-4">4比较同意</label></div>
-                    <div class="radio-option"><input type="radio" id="q8-5" name="Q8" value="5"><label for="q8-5">5非常同意</label></div>
-                </div>
-            </div>
-            <div class="question-item">
-                <div class="q-title">Q9. 我情绪稳定，不容易心烦</div>
-                <div class="radio-group">
-                    <div class="radio-option"><input type="radio" id="q9-1" name="Q9" value="1" required><label for="q9-1">1非常不同意</label></div>
-                    <div class="radio-option"><input type="radio" id="q9-2" name="Q9" value="2"><label for="q9-2">2不太同意</label></div>
-                    <div class="radio-option"><input type="radio" id="q9-3" name="Q9" value="3"><label for="q9-3">3中立</label></div>
-                    <div class="radio-option"><input type="radio" id="q9-4" name="Q9" value="4"><label for="q9-4">4比较同意</label></div>
-                    <div class="radio-option"><input type="radio" id="q9-5" name="Q9" value="5"><label for="q9-5">5非常同意</label></div>
-                </div>
-            </div>
-            <div class="question-item">
-                <div class="q-title">Q10. 我对新事物兴趣有限</div>
-                <div class="radio-group">
-                    <div class="radio-option"><input type="radio" id="q10-1" name="Q10" value="1" required><label for="q10-1">1非常不同意</label></div>
-                    <div class="radio-option"><input type="radio" id="q10-2" name="Q10" value="2"><label for="q10-2">2不太同意</label></div>
-                    <div class="radio-option"><input type="radio" id="q10-3" name="Q10" value="3"><label for="q10-3">3中立</label></div>
-                    <div class="radio-option"><input type="radio" id="q10-4" name="Q10" value="4"><label for="q10-4">4比较同意</label></div>
-                    <div class="radio-option"><input type="radio" id="q10-5" name="Q10" value="5"><label for="q10-5">5非常同意</label></div>
-                </div>
-            </div>
+<div class="text-input-row">
+    <label>班级</label>
+    <input type="text" name="className" id="className" placeholder="请输入你的班级" required>
+</div>
+<div class="text-input-row">
+    <label>学号</label>
+    <input type="text" name="studentId" id="studentId" placeholder="请输入你的学号" required>
+</div>
 
-            <p class="alert-empty" id="alertTip">⚠️请完成所有题目，再提交！</p>
-            <button class="submit-btn" type="submit">提交问卷，查看我的人格结果</button>
-        </form>
-    </div>
+<div class="progress-wrap">
+<div class="progress-text"><span>整体作答进度</span><span id="progressNum">0/67</span></div>
+<div class="progress-bar"><div id="progressBar" class="progress-inner"></div></div>
+</div>
 
-    <!--结果卡片-->
-    <div id="resultBox" class="card result-box">
-        <h1>您的大五人格测评结果</h1>
-        <div class="chart-wrap">
-            <canvas id="radarChart"></canvas>
-        </div>
-        <div class="dimension-text" id="resultText"></div>
-    </div>
+<form id="mainForm">
+<input type="hidden" name="access_key" value="2f37f6dc-684c-48f5-804b-38ffdb29ce2f">
+<input type="hidden" name="subject" value="综合性格测评新答卷">
+
+<h2>一、大五人格‑30（BFI‑2‑XS）</h2>
+<div class="q-item"><div class="q-title">1. 我是一个倾向于安静寡言的人。</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="bfi_1" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_1" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_1" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_1" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_1" value="5"> 5</label></div>
+</div></div>
+<div class="q-item"><div class="q-title">2. 我是一个富有同情心，心肠柔软的人。</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="bfi_2" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_2" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_2" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_2" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_2" value="5"> 5</label></div>
+</div></div>
+<div class="q-item"><div class="q-title">3. 我是一个倾向于缺乏条理的人。</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="bfi_3" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_3" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_3" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_3" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_3" value="5"> 5</label></div>
+</div></div>
+<div class="q-item"><div class="q-title">4. 我是一个经常担心很多事情的人。</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="bfi_4" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_4" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_4" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_4" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_4" value="5"> 5</label></div>
+</div></div>
+<div class="q-item"><div class="q-title">5. 我是一个对艺术、音乐或文学很着迷的人。</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="bfi_5" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_5" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_5" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_5" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_5" value="5"> 5</label></div>
+</div></div>
+<div class="q-item"><div class="q-title">6. 我是一个有主导性，会像领导者一样行事的人。</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="bfi_6" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_6" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_6" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_6" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_6" value="5"> 5</label></div>
+</div></div>
+<div class="q-item"><div class="q-title">7. 我是一个有时会对别人粗鲁的人。</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="bfi_7" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_7" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_7" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_7" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_7" value="5"> 5</label></div>
+</div></div>
+<div class="q-item"><div class="q-title">8. 我是一个开始做任务时有困难的人。</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="bfi_8" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_8" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_8" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_8" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_8" value="5"> 5</label></div>
+</div></div>
+<div class="q-item"><div class="q-title">9. 我是一个容易感到沮丧、低落的人。</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="bfi_9" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_9" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_9" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_9" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_9" value="5"> 5</label></div>
+</div></div>
+<div class="q-item"><div class="q-title">10. 我是一个对抽象概念兴趣不大的人。</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="bfi_10" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_10" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_10" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_10" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_10" value="5"> 5</label></div>
+</div></div>
+<div class="q-item"><div class="q-title">11. 我是一个精力充沛的人。</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="bfi_11" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_11" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_11" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_11" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_11" value="5"> 5</label></div>
+</div></div>
+<div class="q-item"><div class="q-title">12. 我是一个倾向于相信别人是善意的人。</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="bfi_12" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_12" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_12" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_12" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_12" value="5"> 5</label></div>
+</div></div>
+<div class="q-item"><div class="q-title">13. 我是一个可靠，总是可以被信赖的人。</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="bfi_13" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_13" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_13" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_13" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_13" value="5"> 5</label></div>
+</div></div>
+<div class="q-item"><div class="q-title">14. 我是一个情绪稳定，不容易心烦意乱的人。</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="bfi_14" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_14" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_14" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_14" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_14" value="5"> 5</label></div>
+</div></div>
+<div class="q-item"><div class="q-title">15. 我是一个有原创性，常能提出新想法的人。</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="bfi_15" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_15" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_15" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_15" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_15" value="5"> 5</label></div>
+</div></div>
+<div class="q-item"><div class="q-title">16. 我是一个外向、善于社交的人。</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="bfi_16" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_16" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_16" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_16" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_16" value="5"> 5</label></div>
+</div></div>
+<div class="q-item"><div class="q-title">17. 我是一个可能显得冷淡、不关心他人的人。</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="bfi_17" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_17" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_17" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_17" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_17" value="5"> 5</label></div>
+</div></div>
+<div class="q-item"><div class="q-title">18. 我是一个保持物品整洁有序的人。</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="bfi_18" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_18" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_18" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_18" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_18" value="5"> 5</label></div>
+</div></div>
+<div class="q-item"><div class="q-title">19. 我是一个放松，能很好地应对压力的人。</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="bfi_19" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_19" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_19" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_19" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_19" value="5"> 5</label></div>
+</div></div>
+<div class="q-item"><div class="q-title">20. 我是一个艺术兴趣较少的人。</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="bfi_20" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_20" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_20" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_20" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_20" value="5"> 5</label></div>
+</div></div>
+<div class="q-item"><div class="q-title">21. 我是一个更喜欢让别人来负责或带头的人。</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="bfi_21" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_21" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_21" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_21" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_21" value="5"> 5</label></div>
+</div></div>
+<div class="q-item"><div class="q-title">22. 我是一个尊重他人，以尊重的方式对待别人的人。</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="bfi_22" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_22" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_22" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_22" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_22" value="5"> 5</label></div>
+</div></div>
+<div class="q-item"><div class="q-title">23. 我是一个有毅力，会坚持到任务完成的人。</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="bfi_23" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_23" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_23" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_23" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_23" value="5"> 5</label></div>
+</div></div>
+<div class="q-item"><div class="q-title">24. 我是一个有安全感，对自己感到自在的人。</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="bfi_24" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_24" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_24" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_24" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_24" value="5"> 5</label></div>
+</div></div>
+<div class="q-item"><div class="q-title">25. 我是一个思想复杂，善于深入思考的人。</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="bfi_25" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_25" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_25" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_25" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_25" value="5"> 5</label></div>
+</div></div>
+<div class="q-item"><div class="q-title">26. 我是一个比其他人不那么活跃的人。</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="bfi_26" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_26" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_26" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_26" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_26" value="5"> 5</label></div>
+</div></div>
+<div class="q-item"><div class="q-title">27. 我是一个倾向于挑剔别人、指出别人的问题的人。</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="bfi_27" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_27" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_27" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_27" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_27" value="5"> 5</label></div>
+</div></div>
+<div class="q-item"><div class="q-title">28. 我是一个可能有些粗心的人。</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="bfi_28" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_28" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_28" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_28" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_28" value="5"> 5</label></div>
+</div></div>
+<div class="q-item"><div class="q-title">29. 我是一个脾气易变，容易情绪化的人。</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="bfi_29" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_29" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_29" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_29" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_29" value="5"> 5</label></div>
+</div></div>
+<div class="q-item"><div class="q-title">30. 我是一个创造力较少的人。</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="bfi_30" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_30" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_30" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_30" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="bfi_30" value="5"> 5</label></div>
+</div></div>
+
+<h2>二、自我验证追求‑8题</h2>
+<div class="q-item"><div class="q-title">1. 我会坦诚地告诉别人我的习惯和性格，这样他们才能了解我。</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="sv_1" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="sv_1" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="sv_1" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="sv_1" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="sv_1" value="5"> 5</label></div>
+</div></div>
+<div class="q-item"><div class="q-title">2. 在结识新朋友时，我会选择坦诚地展现真实的自己，即使这会让我显得不够完美。</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="sv_2" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="sv_2" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="sv_2" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="sv_2" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="sv_2" value="5"> 5</label></div>
+</div></div>
+<div class="q-item"><div class="q-title">3. 在工作时，我会让别人看到真实的自己，即使这意味着会让别人看到我的局限性。</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="sv_3" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="sv_3" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="sv_3" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="sv_3" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="sv_3" value="5"> 5</label></div>
+</div></div>
+<div class="q-item"><div class="q-title">4. 如果参加面试，我会尽量真实表达自己的性格和工作方式</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="sv_4" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="sv_4" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="sv_4" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="sv_4" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="sv_4" value="5"> 5</label></div>
+</div></div>
+<div class="q-item"><div class="q-title">5. 我喜欢做真实的自己，而不是伪装成别人。</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="sv_5" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="sv_5" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="sv_5" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="sv_5" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="sv_5" value="5"> 5</label></div>
+</div></div>
+<div class="q-item"><div class="q-title">6. 我宁愿别人了解真实的我，也不愿他们对我抱有过高的期望。</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="sv_6" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="sv_6" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="sv_6" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="sv_6" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="sv_6" value="5"> 5</label></div>
+</div></div>
+<div class="q-item"><div class="q-title">7. 为了能和了解我、清楚对我的期望的人一起工作，我愿意接受较低的薪水。</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="sv_7" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="sv_7" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="sv_7" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="sv_7" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="sv_7" value="5"> 5</label></div>
+</div></div>
+<div class="q-item"><div class="q-title">8. 在找工作时，我会努力寻找一个能够接纳真实的我的地方。</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="sv_8" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="sv_8" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="sv_8" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="sv_8" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="sv_8" value="5"> 5</label></div>
+</div></div>
+
+<h2>三、调节焦点</h2>
+<h3>促进焦点（提升导向）</h3>
+<div class="q-item"><div class="q-title">1.我会经常思考，自己如何能获得成功。</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="promo_1" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="promo_1" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="promo_1" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="promo_1" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="promo_1" value="5"> 5</label></div>
+</div></div>
+<div class="q-item"><div class="q-title">2.我会将精力集中在我希望获得成功的事情上。</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="promo_2" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="promo_2" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="promo_2" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="promo_2" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="promo_2" value="5"> 5</label></div>
+</div></div>
+<div class="q-item"><div class="q-title">3.我会深入思考，如何能实现自己的愿望和理想。</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="promo_3" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="promo_3" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="promo_3" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="promo_3" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="promo_3" value="5"> 5</label></div>
+</div></div>
+<div class="q-item"><div class="q-title">4.总的来说，比起避免失败我更加注重如何获得成功。</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="promo_4" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="promo_4" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="promo_4" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="promo_4" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="promo_4" value="5"> 5</label></div>
+</div></div>
+
+<h3>防御焦点（预防导向）</h3>
+<div class="q-item"><div class="q-title">1.相对而言，我更关注如何能避免失败</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="prev_1" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="prev_1" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="prev_1" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="prev_1" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="prev_1" value="5"> 5</label></div>
+</div></div>
+<div class="q-item"><div class="q-title">2.比起追求更多的收益，我更注重预防损失</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="prev_2" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="prev_2" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="prev_2" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="prev_2" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="prev_2" value="5"> 5</label></div>
+</div></div>
+<div class="q-item"><div class="q-title">3.我较少考虑如何追求成功，更关注防止不好的事情发生</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="prev_3" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="prev_3" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="prev_3" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="prev_3" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="prev_3" value="5"> 5</label></div>
+</div></div>
+<div class="q-item"><div class="q-title">4.总体而言，预防损失和获取成功，我更在意前者</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="prev_4" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="prev_4" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="prev_4" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="prev_4" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="prev_4" value="5"> 5</label></div>
+</div></div>
+
+<h2>四、PDP性格短版‑15题</h2>
+<div class="q-item"><div class="q-title">1. 我喜欢快速抓住目标，并推动事情向前。</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="pdp_1" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_1" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_1" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_1" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_1" value="5"> 5</label></div>
+</div></div>
+<div class="q-item"><div class="q-title">2. 我喜欢在团队中表达想法、带动气氛。</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="pdp_2" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_2" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_2" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_2" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_2" value="5"> 5</label></div>
+</div></div>
+<div class="q-item"><div class="q-title">3. 我重视稳定、和谐、让大家都感到舒服。</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="pdp_3" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_3" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_3" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_3" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_3" value="5"> 5</label></div>
+</div></div>
+<div class="q-item"><div class="q-title">4. 做决定前，我希望先看清规则、数据和依据。</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="pdp_4" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_4" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_4" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_4" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_4" value="5"> 5</label></div>
+</div></div>
+<div class="q-item"><div class="q-title">5. 我能根据不同对象和场景调整自己的表达方式。</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="pdp_5" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_5" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_5" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_5" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_5" value="5"> 5</label></div>
+</div></div>
+<div class="q-item"><div class="q-title">6. 面对困难任务时，我倾向于直接行动、解决问题。</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="pdp_6" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_6" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_6" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_6" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_6" value="5"> 5</label></div>
+</div></div>
+<div class="q-item"><div class="q-title">7. 我比较容易主动认识新人或开启话题。</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="pdp_7" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_7" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_7" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_7" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_7" value="5"> 5</label></div>
+</div></div>
+<div class="q-item"><div class="q-title">8. 我愿意耐心倾听别人，把关系照顾好。</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="pdp_8" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_8" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_8" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_8" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_8" value="5"> 5</label></div>
+</div></div>
+<div class="q-item"><div class="q-title">9. 我会注意细节，尽量避免错误和遗漏。</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="pdp_9" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_9" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_9" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_9" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_9" value="5"> 5</label></div>
+</div></div>
+<div class="q-item"><div class="q-title">10. 当计划变化时，我通常能比较快适应。</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="pdp_10" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_10" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_10" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_10" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_10" value="5"> 5</label></div>
+</div></div>
+<div class="q-item"><div class="q-title">11. 需要有人做决定时，我愿意站出来承担责任。</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="pdp_11" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_11" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_11" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_11" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_11" value="5"> 5</label></div>
+</div></div>
+<div class="q-item"><div class="q-title">12. 公开展示、分享或说服别人会让我更有能量。</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="pdp_12" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_12" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_12" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_12" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_12" value="5"> 5</label></div>
+</div></div>
+<div class="q-item"><div class="q-title">13. 我不喜欢太突然、太激烈的变化。</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="pdp_13" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_13" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_13" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_13" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_13" value="5"> 5</label></div>
+</div></div>
+<div class="q-item"><div class="q-title">14. 比起凭感觉行动，我更相信分析和证据。</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="pdp_14" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_14" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_14" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_14" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_14" value="5"> 5</label></div>
+</div></div>
+<div class="q-item"><div class="q-title">15. 我常能把不同人的意见整合成一个可行方案。</div>
+<div class="radio-group">
+<div class="radio-opt"><label><input type="radio" name="pdp_15" value="1" required> 1</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_15" value="2"> 2</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_15" value="3"> 3</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_15" value="4"> 4</label></div>
+<div class="radio-opt"><label><input type="radio" name="pdp_15" value="5"> 5</label></div>
+</div></div>
+
+<p class="alert-tip" id="alertTip">⚠️请填写班级学号，并完成全部题目后再提交！</p>
+<p class="loading-tip" id="loadingTip">答卷上传中，请稍候...</p>
+<button class="submit-btn" type="submit">提交问卷，查看全部测评结果</button>
+</form>
+</div>
+
+<div id="resultBox" class="card result-box">
+<h1>您的全部测评结果</h1>
+<div class="chart-wrap">
+    <canvas id="bfiRadar"></canvas>
+</div>
+<div id="resultContent"></div>
+</div>
 </div>
 
 <script>
-    //进度条
-    const radios = document.querySelectorAll('input[type="radio"]');
-    const progressNum = document.getElementById("progressNum");
-    const progressBar = document.getElementById("progressBar");
-    const totalQ = 10;
-    radios.forEach(radio=>{
-        radio.onchange = function(){
-            const checkedCount = document.querySelectorAll('input[type="radio"]:checked').length;
-            progressNum.innerText = checkedCount + "/" + totalQ;
-            progressBar.style.width = (checkedCount/totalQ*100)+"%";
-        }
-    })
+//PDP动物画像文本，严格复制文档
+const pdpText = {
+"老虎型｜目标推进者":`你是一个目标感很强的人，做事果断、直接，遇到问题时更倾向于快速判断、推动结果。你不太喜欢拖延和模糊不清的安排，通常愿意承担责任，也能在关键时刻做决定。需要注意的是，你的高效率和强推进力有时会让别人感到压力，因此在表达要求时，可以多留意他人的感受和节奏。`,
+"孔雀型｜表达影响者":`你擅长表达，也容易带动现场气氛。你热情、外向，喜欢与人互动，能够通过语言、情绪和感染力影响他人。你通常适合承担展示、沟通、协调和激励团队的角色。需要注意的是，你有时可能会更关注想法和氛围，而忽略细节、执行和后续落地，因此可以搭配更清晰的计划来增强结果感。`,
+"考拉型｜稳定支持者":`你给人的感觉温和、可靠，重视关系，也愿意在团队中提供稳定支持。你通常耐心、包容，不喜欢激烈冲突，更倾向于用平和的方式维持合作。你的优势在于让别人感到安心和被接纳。需要注意的是，当变化太快或冲突出现时，你可能会选择回避，因此可以尝试更主动地表达自己的真实想法。`,
+"猫头鹰型｜精确分析者":`你做事谨慎，重视证据、逻辑和规则。你通常不会轻易下结论，而是希望先把信息看清楚、把风险想明白。你适合处理需要分析、判断、检查和精确执行的任务。需要注意的是，你有时可能因为追求周全而行动较慢，甚至陷入过度分析；在信息足够时，适当推进会让你的判断更有现实价值。`,
+"变色龙型｜弹性整合者":`你适应性强，能够根据不同情境调整自己的沟通方式和行动策略。你擅长理解不同人的立场，也能在分歧中寻找平衡点，帮助团队整合意见。你的优势在于灵活、协调和连接。需要注意的是，你有时可能为了适应环境而弱化自己的立场，因此在关键问题上，可以更清楚地表达边界和原则。`
+};
 
-    const form = document.getElementById("big5Form");
-    const surveyBox = document.getElementById("surveyBox");
-    const resultBox = document.getElementById("resultBox");
-    const alertTip = document.getElementById("alertTip");
-    let radarChart;
-
-    form.addEventListener("submit", async function(e){
-        e.preventDefault(); //阻止原生表单跳转（关键！）
-        const allAnswered = document.querySelectorAll('input[type="radio"]:checked').length === 10;
-        if(!allAnswered){
-            alertTip.style.display="block";
-            return;
-        }
-        alertTip.style.display="none";
-
-        //收集作答
-        const formData = new FormData(form);
-        const q = {};
-        for(let i=1;i<=10;i++){
-            q["Q"+i] = Number(document.querySelector(`input[name="Q${i}"]:checked`).value);
-        }
-
-        //BFI-10计分（反向计分）
-        const E = (6 - q.Q1) + q.Q6;
-        const A = q.Q2 + (6 - q.Q7);
-        const C = (6 - q.Q3) + q.Q8;
-        const N = (6 - q.Q4) + q.Q9;
-        const O = q.Q5 + (6 - q.Q10);
-
-        try{
-            //异步提交给Web3Forms，不会跳转页面
-            await fetch("https://api.web3forms.com/submit",{
-                method:"POST",
-                body:formData
-            })
-        }catch(err){
-            console.log("提交完成",err);
-        }
-
-        //渲染雷达图结果
-        surveyBox.style.display="none";
-        resultBox.style.display="block";
-        drawChart(E,A,C,N,O);
-        fillText(E,A,C,N,O);
-    })
-
-    function drawChart(E,A,C,N,O){
-        const ctx = document.getElementById('radarChart').getContext('2d');
-        if(radarChart) radarChart.destroy();
-        radarChart = new Chart(ctx, {
-            type: 'radar',
-            data:{
-                labels:["外向性E","宜人性A","尽责性C","神经质N","开放性O"],
-                datasets:[{
-                    label:"人格得分（2~10分）",
-                    data:[E,A,C,N,O],
-                    backgroundColor:"rgba(64,123,255,0.2)",
-                    borderColor:"#407bff",
-                    pointBackgroundColor:"#407bff"
-                }]
-            },
-            options:{
-                scales:{
-                    r:{min:2,max:10,ticks:{stepSize:2}}
-                }
-            }
-        })
+//进度统计
+const radios = document.querySelectorAll('input[type="radio"]');
+const progressNum = document.getElementById("progressNum");
+const progressBar = document.getElementById("progressBar");
+const totalQ = 67;
+radios.forEach(r=>{
+    r.onchange = ()=>{
+        const checked = document.querySelectorAll('input[type="radio"]:checked').length;
+        progressNum.innerText = `${checked}/${totalQ}`;
+        progressBar.style.width = (checked/totalQ*100)+"%";
     }
+})
 
-    function fillText(E,A,C,N,O){
-        const descList = [
-            `✅外向性(E)：${E}分。分数越高，代表越外向、乐于社交；低分偏安静内敛。`,
-            `✅宜人性(A)：${A}分。分数越高，代表友善共情、善于体谅他人；低分更直接、喜欢争辩。`,
-            `✅尽责性(C)：${C}分。分数越高代表自律有条理、责任心强；低分随性灵活。`,
-            `✅神经质(N)：${N}分。分数越高情绪更容易波动敏感；低分情绪稳定平和。`,
-            `✅开放性(O)：${O}分。分数越高喜欢探索新事物、想象力强；低分偏好传统保守。`
-        ]
-        document.getElementById("resultText").innerHTML = descList.join("<br><br>");
+const form = document.getElementById("mainForm");
+const surveyBox = document.getElementById("surveyBox");
+const resultBox = document.getElementById("resultBox");
+const resultContent = document.getElementById("resultContent");
+const alertTip = document.getElementById("alertTip");
+const loadingTip = document.getElementById("loadingTip");
+let radarChart;
+
+function drawRadar(extra,agree,consc,neuro,open){
+    const ctx = document.getElementById('bfiRadar').getContext('2d');
+    if(radarChart) radarChart.destroy();
+    radarChart = new Chart(ctx,{
+        type:"radar",
+        data:{
+            labels:["外倾性","随和性","责任心","情绪性","开放性"],
+            datasets:[{
+                label:"大五人格得分（6‑30分）",
+                data:[extra,agree,consc,neuro,open],
+                backgroundColor:"rgba(64,123,255,0.2)",
+                borderColor:"#407bff",
+                pointBackgroundColor:"#407bff"
+            }]
+        },
+        options:{scales:{r:{min:6,max:30}}}
+    })
+}
+
+form.addEventListener("submit",async function(e){
+    e.preventDefault();
+    const className = document.getElementById("className").value.trim();
+    const studentId = document.getElementById("studentId").value.trim();
+    const checkedCount = document.querySelectorAll('input[type="radio"]:checked').length;
+
+    if(!className||!studentId||checkedCount!==totalQ){
+        alertTip.style.display="block";
+        return;
     }
-</script>
-</body>
-</html>
+    alertTip.style.display="none";
+    loadingTip.style.display="block";
+
+    //收集作答
+    const dataObj = {
+        access_key:"2f37f6dc-684c-48f5-804b-38ffdb29ce2f",
+        subject:"综合性格测评新答卷",
+        className,
+        studentId
+    };
+    for(let i=1;i<=30;i++) dataObj[`bfi_${i}`] = Number(document.querySelector(`input[name="bfi_${i}"]:checked`).value);
+    for(let i=1;i<=8;i++) dataObj[`sv_${i}`] = Number(document.querySelector(`input[name="sv_${i}"]:checked`).value);
+    for(let i=1;i<=4;i++){
+        dataObj[`promo_${i}`] = Number(document.querySelector(`input[name="promo_${i}"]:checked`).value);
+        dataObj[`prev_${i}`] = Number(document.querySelector(`input[name="prev_${i}"]:checked`).value);
+    }
+    for(let i=1;i<=15;i++) dataObj[`pdp_${i}`] = Number(document.querySelector(`input[name="pdp_${i}"]:checked`).value);
+
+    //BFI‑2‑XS计分
+    const b = dataObj;
+    const Extra = (6-b.bfi_1)+b.bfi_6+b.bfi_11+b.bfi_16+(6-b.bfi_21)+(6-b.bfi_26);
+    const Agree = b.bfi_2+(6-b.bfi_7)+b.bfi_12+(6-b.bfi_17)+b.bfi_22+(6-b.bfi_27);
+    const Consc = (6-b.bfi_3)+(6-b.bfi_8)+b.bfi_13+b.bfi_18+b.bfi_23+(6-b.bfi_28);
+    const Neuro = b.bfi_4+b.bfi_9+(6-b.bfi_14)+(6-b.bfi_19)+(6-b.bfi_24)+b.bfi_29;
+    const Open = b.bfi_5+(6-b.bfi_10)+b.bfi_15+(6-b.bfi_20)+b.bfi_25+(6-b.bfi_30);
+
+    //自我验证总分
+    let svSum=0;
+    for(let i=1;i<=8;i++) svSum += dataObj[`sv_${i}`];
+    //调节焦点
+    let promoSum=0,prevSum=0;
+    for(let i=1;i<=4;i++){
+        promoSum += dataObj[`promo_${i}`];
+        prevSum += dataObj[`prev_${i}`];
+    }
+    //PDP计分
+    const tiger = b.bfi_1+b.bfi_6+b.bfi_11;
+    const peacock = b.bfi_2+b.bfi_7+b.bfi_12;
+    const koala = b.bfi_3+b.bfi_8+b.bfi_13;
+    const owl = b.bfi_4+b.bfi_9+b.bfi_14;
+    const chameleon = b.b
