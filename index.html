@@ -635,7 +635,7 @@ function drawRadar(extra,agree,consc,neuro,open){
 }
 
 form.addEventListener("submit",async function(e){
-    e.preventDefault(); //【最重要！阻止原生表单跳转】
+    e.preventDefault();
     const className = document.getElementById("className").value.trim();
     const studentId = document.getElementById("studentId").value.trim();
     const checkedCount = document.querySelectorAll('input[type="radio"]:checked').length;
@@ -667,4 +667,8 @@ form.addEventListener("submit",async function(e){
     const Extra = (6-b.bfi_1)+b.bfi_6+b.bfi_11+b.bfi_16+(6-b.bfi_21)+(6-b.bfi_26);
     const Agree = b.bfi_2+(6-b.bfi_7)+b.bfi_12+(6-b.bfi_17)+b.bfi_22+(6-b.bfi_27);
     const Consc = (6-b.bfi_3)+(6-b.bfi_8)+b.bfi_13+b.bfi_18+b.bfi_23+(6-b.bfi_28);
-    const Neuro = b.bfi_4+b.bfi_9+(6-b.bfi_
+    const Neuro = b.bfi_4+b.bfi_9+(6-b.bfi_14)+(6-b.bfi_19)+(6-b.bfi_24)+b.bfi_29;
+    const Open = b.bfi_5+(6-b.bfi_10)+b.bfi_15+(6-b.bfi_20)+b.bfi_25+(6-b.bfi_30);
+
+    //自我验证追求总分
+    let sv
