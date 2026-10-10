@@ -36,6 +36,7 @@ h3{color:#34495e;font-size:17px;margin:16px 0 8px 0;}
 .result-block{background:#f7f9fc;padding:20px;border-radius:12px;margin-bottom:20px;}
 .result-block h3{margin-bottom:10px;color:#2c3e50;}
 .chart-wrap{max-width:540px;margin:16px auto 24px;}
+.pdp-animal-img{max-width:220px;margin:12px auto;display:block;}
 </style>
 </head>
 <body>
@@ -587,6 +588,15 @@ const pdpText = {
 "变色龙型｜弹性整合者":`你适应性强，能够根据不同情境调整自己的沟通方式和行动策略。你擅长理解不同人的立场，也能在分歧中寻找平衡点，帮助团队整合意见。你的优势在于灵活、协调和连接。需要注意的是，你有时可能为了适应环境而弱化自己的立场，因此在关键问题上，可以更清楚地表达边界和原则。`
 };
 
+//动物图片文件名映射（你上传到github根目录的png）
+const animalImgMap = {
+"老虎型｜目标推进者":"tiger.png",
+"孔雀型｜表达影响者":"peacock.png",
+"考拉型｜稳定支持者":"koala.png",
+"猫头鹰型｜精确分析者":"owl.png",
+"变色龙型｜弹性整合者":"chameleon.png"
+};
+
 //进度统计
 const radios = document.querySelectorAll('input[type="radio"]');
 const progressNum = document.getElementById("progressNum");
@@ -659,22 +669,4 @@ form.addEventListener("submit",async function(e){
     const b = dataObj;
     const Extra = (6-b.bfi_1)+b.bfi_6+b.bfi_11+b.bfi_16+(6-b.bfi_21)+(6-b.bfi_26);
     const Agree = b.bfi_2+(6-b.bfi_7)+b.bfi_12+(6-b.bfi_17)+b.bfi_22+(6-b.bfi_27);
-    const Consc = (6-b.bfi_3)+(6-b.bfi_8)+b.bfi_13+b.bfi_18+b.bfi_23+(6-b.bfi_28);
-    const Neuro = b.bfi_4+b.bfi_9+(6-b.bfi_14)+(6-b.bfi_19)+(6-b.bfi_24)+b.bfi_29;
-    const Open = b.bfi_5+(6-b.bfi_10)+b.bfi_15+(6-b.bfi_20)+b.bfi_25+(6-b.bfi_30);
-
-    //自我验证总分
-    let svSum=0;
-    for(let i=1;i<=8;i++) svSum += dataObj[`sv_${i}`];
-    //调节焦点
-    let promoSum=0,prevSum=0;
-    for(let i=1;i<=4;i++){
-        promoSum += dataObj[`promo_${i}`];
-        prevSum += dataObj[`prev_${i}`];
-    }
-    //PDP计分
-    const tiger = b.bfi_1+b.bfi_6+b.bfi_11;
-    const peacock = b.bfi_2+b.bfi_7+b.bfi_12;
-    const koala = b.bfi_3+b.bfi_8+b.bfi_13;
-    const owl = b.bfi_4+b.bfi_9+b.bfi_14;
-    const chameleon = b.b
+    const Consc = (6-b.bfi_3)+(6-b.bfi_8)+b.bfi_13
