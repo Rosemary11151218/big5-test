@@ -1,724 +1,575 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>性格测试</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: #333;
-        }
-        .progress-bar {
-            position: fixed; top: 0; left: 0; width: 100%; height: 4px; background: rgba(255,255,255,0.3); z-index: 1000;
-        }
-        .progress-fill {
-            height: 100%; background: linear-gradient(90deg, #f093fb, #f5576c); width: 0%; transition: width 0.3s ease;
-        }
-        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
-        .header {
-            text-align: center; padding: 40px 20px; color: white;
-        }
-        .header h1 { font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
-        .header p { font-size: 1.1em; opacity: 0.9; }
-        .section {
-            background: white; border-radius: 15px; padding: 30px; margin-bottom: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1); transition: transform 0.3s ease;
-        }
-        .section:hover { transform: translateY(-2px); }
-        .section-title {
-            font-size: 1.5em; color: #667eea; margin-bottom: 20px; padding-bottom: 10px;
-            border-bottom: 3px solid #667eea;
-        }
-        .question {
-            margin-bottom: 20px; padding: 20px; background: #f8f9ff; border-radius: 10px;
-            border-left: 4px solid #667eea; transition: all 0.3s ease;
-        }
-        .question:hover { background: #f0f4ff; border-left-color: #764ba2; }
-        .question-text { font-size: 1.1em; margin-bottom: 12px; color: #444; }
-        .options { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
-        .option {
-            flex: 1; min-width: 80px; text-align: center; padding: 10px 15px;
-            background: white; border: 2px solid #e0e0e0; border-radius: 25px;
-            cursor: pointer; transition: all 0.3s ease; font-size: 0.95em;
-        }
-        .option:hover { border-color: #667eea; background: #f8f9ff; }
-        .option input[type="radio"] { display: none; }
-        .option input[type="radio"]:checked + .option-label {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white; border-color: transparent; transform: scale(1.05);
-        }
-        .option-label {
-            display: block; padding: 8px 12px; border-radius: 20px; cursor: pointer;
-        }
-        .btn {
-            display: inline-block; padding: 15px 40px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white; border: none; border-radius: 30px; font-size: 1.1em;
-            cursor: pointer; transition: all 0.3s ease; text-decoration: none;
-        }
-        .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4); }
-        .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-        .results { display: none; }
-        .result-card {
-            background: white; border-radius: 15px; padding: 30px; margin-bottom: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-        .animal-display {
-            text-align: center; padding: 30px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            border-radius: 15px; margin: 20px 0;
-        }
-        .animal-icon { width: 120px; height: 120px; margin: 0 auto 20px; }
-        .animal-name { font-size: 2em; color: #667eea; margin-bottom: 10px; }
-        .animal-desc { font-size: 1.1em; line-height: 1.8; color: #555; max-width: 600px; margin: 0 auto; }
-        .chart-container { position: relative; height: 400px; margin: 20px 0; }
-        .score-bars { margin: 20px 0; }
-        .score-bar { margin-bottom: 15px; }
-        .score-label { display: flex; justify-content: space-between; margin-bottom: 5px; }
-        .bar-bg { background: #f0f0f0; border-radius: 10px; height: 25px; overflow: hidden; }
-        .bar-fill {
-            height: 100%; border-radius: 10px; transition: width 1s ease;
-            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-        }
-        .pdp-scores { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin: 20px 0; }
-        .pdp-card {
-            background: #f8f9ff; padding: 20px; border-radius: 10px; text-align: center;
-            border: 2px solid transparent; transition: all 0.3s ease;
-        }
-        .pdp-card.highlight { border-color: #667eea; background: #f0f4ff; transform: scale(1.05); }
-        .pdp-card h4 { color: #667eea; margin-bottom: 10px; }
-        .pdp-card .score { font-size: 2em; font-weight: bold; color: #764ba2; }
-        .note {
-            background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 10px;
-            padding: 15px; margin: 20px 0; font-size: 0.95em; color: #856404;
-        }
-        .text-input {
-            width: 100%; padding: 12px 14px; border: 1px solid #d1d5db; border-radius: 10px;
-            font-size: 15px; margin-top: 8px; box-sizing: border-box;
-        }
-        .question-block { margin-bottom: 15px; }
-        .question-block label { display: block; margin-bottom: 5px; font-weight: bold; color: #444; }
-        .submit-status { margin-top: 10px; color: #667eea; font-weight: bold; }
-        @media (max-width: 600px) {
-            .header h1 { font-size: 2em; }
-            .options { flex-direction: column; }
-            .option { min-width: 100%; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>性格测试</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  padding: 20px;
+}
+.container { max-width: 720px; margin: 0 auto; }
+.header {
+  text-align: center; color: #fff; padding: 30px 0 20px;
+}
+.header h1 { font-size: 28px; margin-bottom: 8px; }
+.header p { font-size: 14px; opacity: 0.85; }
+.section-card {
+  background: #fff; border-radius: 16px; padding: 24px;
+  margin-bottom: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+.section-title {
+  font-size: 18px; color: #333; margin-bottom: 16px;
+  padding-bottom: 10px; border-bottom: 2px solid #667eea;
+}
+.question-block { margin-bottom: 20px; }
+.question-text {
+  font-size: 15px; color: #333; margin-bottom: 10px; line-height: 1.6;
+}
+.options { display: flex; flex-wrap: wrap; gap: 8px; }
+.options label {
+  display: flex; align-items: center; gap: 4px;
+  padding: 8px 14px; border: 1px solid #e0e0e0; border-radius: 8px;
+  cursor: pointer; font-size: 14px; transition: all 0.2s;
+}
+.options label:hover { background: #f5f3ff; border-color: #667eea; }
+.options input[type="radio"] { accent-color: #667eea; }
+.options label:has(input:checked) {
+  background: #ede9fe; border-color: #667eea; color: #5b21b6;
+}
+.text-input {
+  width: 100%; padding: 12px 14px; border: 1px solid #d1d5db;
+  border-radius: 10px; font-size: 15px; margin-top: 8px; box-sizing: border-box;
+}
+.text-input:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102,126,234,0.15); }
+#submitBtn {
+  display: block; width: 100%; padding: 14px; background: linear-gradient(135deg, #667eea, #764ba2);
+  color: #fff; border: none; border-radius: 12px; font-size: 17px;
+  cursor: pointer; margin-top: 20px; transition: opacity 0.2s;
+}
+#submitBtn:hover { opacity: 0.9; }
+#submitBtn:disabled { opacity: 0.6; cursor: not-allowed; }
+#submitStatus {
+  text-align: center; margin-top: 12px; font-size: 15px; min-height: 24px;
+}
+#resultPage { display: none; text-align: center; }
+#resultPage .section-card { text-align: left; }
+.radar-container { text-align: center; margin: 20px 0; }
+#radarCanvas { max-width: 100%; height: auto; }
+.animal-card {
+  background: linear-gradient(135deg, #fef3c7, #fde68a);
+  border-radius: 16px; padding: 24px; text-align: center; margin: 20px 0;
+}
+.animal-icon { font-size: 64px; display: block; margin-bottom: 12px; }
+.animal-name { font-size: 24px; font-weight: bold; color: #92400e; }
+.animal-desc { font-size: 14px; color: #78350f; margin-top: 8px; line-height: 1.6; }
+.score-bar-container { margin: 12px 0; }
+.score-bar-label { display: flex; justify-content: space-between; font-size: 14px; color: #555; margin-bottom: 4px; }
+.score-bar { height: 10px; background: #e5e7eb; border-radius: 5px; overflow: hidden; }
+.score-bar-fill { height: 100%; border-radius: 5px; }
+.animal-detail { margin: 16px 0; padding: 16px; background: #fff; border-radius: 12px; }
+.animal-detail h3 { color: #92400e; margin-bottom: 8px; }
+.animal-detail p { color: #78350f; font-size: 14px; line-height: 1.6; }
+</style>
 </head>
 <body>
-    <div class="progress-bar"><div class="progress-fill" id="progressBar"></div></div>
-    
-    <div class="container">
-        <div class="header">
-            <h1>性格测试</h1>
-            <p>本测试用于课堂互动与团队沟通讨论，不等同于正式测评或心理诊断。</p>
-        </div>
+<div class="container">
+  <div class="header">
+    <h1>性格测试</h1>
+    <p>请根据你的实际情况如实作答，所有数据仅用于科研</p>
+  </div>
 
-        <form id="testForm" action="https://api.web3forms.com/submit" method="POST">
-            <input type="hidden" name="access_key" value="2f37f6dc-684c-48f5-804b-38ffdb29ce2f">
-            <input type="hidden" name="subject" value="性格测试提交">
-            <input type="hidden" name="from_name" value="性格测试">
-            <input type="hidden" id="formData" name="formData">
+  <form id="testForm" action="https://api.web3forms.com/submit" method="POST">
+    <input type="hidden" name="access_key" value="2f37f6dc-684c-48f5-804b-38ffdb29ce2f">
+    <input type="hidden" name="subject" value="性格测试提交">
+    <input type="hidden" name="from_name" value="性格测试">
+    <input type="hidden" name="replyto" value="13601463215@163.com">
 
-            <!-- 基本信息 -->
-            <div class="section">
-                <h2 class="section-title">基本信息</h2>
-                <div class="question-block">
-                    <label class="question-text" for="classInput">班级</label>
-                    <input type="text" id="classInput" name="班级" placeholder="例如：2024级心理学1班" class="text-input" required>
-                </div>
-                <div class="question-block">
-                    <label class="question-text" for="studentIdInput">学号</label>
-                    <input type="text" id="studentIdInput" name="学号" placeholder="请输入学号" class="text-input" required>
-                </div>
-            </div>
-
-            <!-- 大五人格 -->
-            <div class="section">
-                <h2 class="section-title">大五人格测试</h2>
-                <p style="margin-bottom: 20px; color: #666;">请根据其与您的实际情况的相符程度回答问题：1=非常不同意，2=不太同意，3=中立，4=比较同意，5=非常同意</p>
-                <div id="bigFiveQuestions"></div>
-            </div>
-
-            <!-- 自我验证追求 -->
-            <div class="section">
-                <h2 class="section-title">自我验证追求</h2>
-                <div id="selfVerificationQuestions"></div>
-            </div>
-
-            <!-- 调节焦点促进型 -->
-            <div class="section">
-                <h2 class="section-title">调节焦点-促进型</h2>
-                <div id="promotionQuestions"></div>
-            </div>
-
-            <!-- 调节焦点预防型 -->
-            <div class="section">
-                <h2 class="section-title">调节焦点-预防型</h2>
-                <div id="preventionQuestions"></div>
-            </div>
-
-            <!-- PDP性格测试 -->
-            <div class="section">
-                <h2 class="section-title">PDP性格测试</h2>
-                <div id="pdpQuestions"></div>
-            </div>
-
-            <div style="text-align: center; margin: 30px 0;">
-                <button type="submit" class="btn" id="submitBtn">提交并查看结果</button>
-                <div class="submit-status" id="submitStatus"></div>
-            </div>
-        </form>
-
-        <!-- 结果展示 -->
-        <div class="results" id="results">
-            <div class="result-card">
-                <h2 class="section-title">测试结果</h2>
-                
-                <div class="chart-container">
-                    <canvas id="bigFiveChart"></canvas>
-                </div>
-
-                <div class="score-bars" id="bigFiveScores"></div>
-
-                <h3 style="margin: 30px 0 20px; color: #667eea;">PDP性格类型得分</h3>
-                <div class="pdp-scores" id="pdpScores"></div>
-
-                <div class="animal-display" id="animalDisplay"></div>
-
-                <div id="animalDescriptions"></div>
-            </div>
-
-            <div style="text-align: center; margin: 30px 0;">
-                <button class="btn" onclick="window.print()">打印结果</button>
-                <button class="btn" onclick="location.reload()">重新测试</button>
-            </div>
-        </div>
+    <div class="section-card">
+      <h2 class="section-title">基本信息</h2>
+      <div class="question-block">
+        <label class="question-text">姓名</label>
+        <input type="text" name="姓名" placeholder="请输入你的姓名" class="text-input" required>
+      </div>
+      <div class="question-block">
+        <label class="question-text">学号</label>
+        <input type="text" name="学号" placeholder="请输入你的学号" class="text-input" required>
+      </div>
+      <div class="question-block">
+        <label class="question-text">手机号后四位</label>
+        <input type="text" name="手机后四位" placeholder="例如：1234" maxlength="4" class="text-input" required>
+      </div>
     </div>
 
-    <script>
-        // 大五人格题目数据
-        const bigFiveData = [
-            { text: "我是一个......的人", sub: "1. 倾向于安静寡言。", reverse: false, dimension: "外倾性" },
-            { text: "", sub: "2. 富有同情心，心肠柔软。", reverse: false, dimension: "随和性" },
-            { text: "", sub: "3. 倾向于缺乏条理。", reverse: true, dimension: "责任心" },
-            { text: "", sub: "4. 经常担心很多事情。", reverse: false, dimension: "情绪性" },
-            { text: "", sub: "5. 对艺术、音乐或文学很着迷。", reverse: false, dimension: "开放性" },
-            { text: "", sub: "6. 有主导性，会像领导者一样行事。", reverse: false, dimension: "外倾性" },
-            { text: "", sub: "7. 有时会对别人粗鲁。", reverse: true, dimension: "随和性" },
-            { text: "", sub: "8. 开始做任务时有困难。", reverse: true, dimension: "责任心" },
-            { text: "", sub: "9. 容易感到沮丧、低落。", reverse: false, dimension: "情绪性" },
-            { text: "", sub: "10. 对抽象概念兴趣不大。", reverse: true, dimension: "开放性" },
-            { text: "", sub: "11. 精力充沛。", reverse: false, dimension: "外倾性" },
-            { text: "", sub: "12. 倾向于相信别人是善意的。", reverse: false, dimension: "随和性" },
-            { text: "", sub: "13. 可靠，总是可以被信赖。", reverse: false, dimension: "责任心" },
-            { text: "", sub: "14. 情绪稳定，不容易心烦意乱。", reverse: true, dimension: "情绪性" },
-            { text: "", sub: "15. 有原创性，常能提出新想法。", reverse: false, dimension: "开放性" },
-            { text: "", sub: "16. 外向、善于社交。", reverse: false, dimension: "外倾性" },
-            { text: "", sub: "17. 可能显得冷淡、不关心他人。", reverse: true, dimension: "随和性" },
-            { text: "", sub: "18. 保持物品整洁有序。", reverse: false, dimension: "责任心" },
-            { text: "", sub: "19. 放松，能很好地应对压力。", reverse: true, dimension: "情绪性" },
-            { text: "", sub: "20. 艺术兴趣较少。", reverse: true, dimension: "开放性" },
-            { text: "", sub: "21. 更喜欢让别人来负责或带头。", reverse: true, dimension: "外倾性" },
-            { text: "", sub: "22. 尊重他人，以尊重的方式对待别人。", reverse: false, dimension: "随和性" },
-            { text: "", sub: "23. 有毅力，会坚持到任务完成。", reverse: false, dimension: "责任心" },
-            { text: "", sub: "24. 有安全感，对自己感到自在。", reverse: true, dimension: "情绪性" },
-            { text: "", sub: "25. 思想复杂，善于深入思考。", reverse: false, dimension: "开放性" },
-            { text: "", sub: "26. 比其他人不那么活跃。", reverse: true, dimension: "外倾性" },
-            { text: "", sub: "27. 倾向于挑剔别人、指出别人的问题。", reverse: true, dimension: "随和性" },
-            { text: "", sub: "28. 可能有些粗心。", reverse: true, dimension: "责任心" },
-            { text: "", sub: "29. 脾气易变，容易情绪化。", reverse: false, dimension: "情绪性" },
-            { text: "", sub: "30. 创造力较少。", reverse: true, dimension: "开放性" }
-        ];
+    <div class="section-card"><div id="bfQuestions"></div></div>
+    <div class="section-card"><div id="svQuestions"></div></div>
+    <div class="section-card"><div id="promoQuestions"></div></div>
+    <div class="section-card"><div id="preventQuestions"></div></div>
+    <div class="section-card"><div id="pdpQuestions"></div></div>
 
-        // 自我验证追求题目
-        const selfVerificationData = [
-            "我会坦诚地告诉别人我的习惯和性格，这样他们才能了解我。",
-            "在结识新朋友时，我会选择坦诚地展现真实的自己，即使这会让我显得不够完美。",
-            "在工作时，我会让别人看到真实的自己，即使这意味着会让别人看到我的局限性。",
-            "如果参加面试，我会尽量真实表达自己的性格和工作方式。",
-            "我喜欢做真实的自己，而不是伪装成别人。",
-            "我宁愿别人了解真实的我，也不愿他们对我抱有过高的期望。",
-            "为了能和了解我、清楚对我的期望的人一起工作，我愿意接受较低的薪水。",
-            "在找工作时，我会努力寻找一个能够接纳真实的我的地方。"
-        ];
+    <button type="submit" id="submitBtn">提交结果</button>
+    <div id="submitStatus"></div>
+  </form>
 
-        // 调节焦点促进型题目
-        const promotionData = [
-            "我会经常思考，自己如何能获得成功。",
-            "我会将精力集中在我希望获得成功的事情上。",
-            "我会深入思考，如何能实现自己的愿望和理想。",
-            "总的来说，比起避免失败我更加注重如何获得成功。"
-        ];
+  <div id="resultPage">
+    <div class="section-card">
+      <h2 class="section-title">你的性格画像</h2>
+      <div class="radar-container">
+        <canvas id="radarCanvas" width="400" height="400"></canvas>
+      </div>
+      <div class="animal-card">
+        <span class="animal-icon" id="animalIcon"></span>
+        <div class="animal-name" id="animalName"></div>
+        <div class="animal-desc" id="animalDesc"></div>
+      </div>
+      <div id="scoreBars"></div>
+      <div id="animalDetails"></div>
+      <p style="margin-top:20px;color:#888;font-size:13px;text-align:center;">感谢参与！数据已提交。</p>
+    </div>
+  </div>
+</div>
+<script>
+// 大五人格30题
+var bigFiveData = [
+  "倾向于安静寡言。",
+  "富有同情心，心肠柔软。",
+  "倾向于缺乏条理。",
+  "经常担心很多事情。",
+  "对艺术、音乐或文学很着迷。",
+  "有主导性，会像领导者一样行事。",
+  "有时会对别人粗鲁。",
+  "开始做任务时有困难。",
+  "容易感到沮丧、低落。",
+  "对抽象概念兴趣不大。",
+  "精力充沛。",
+  "倾向于相信别人是善意的。",
+  "可靠，总是可以被信赖。",
+  "情绪稳定，不容易心烦意乱。",
+  "有原创性，常能提出新想法。",
+  "外向、善于社交。",
+  "可能显得冷淡、不关心他人。",
+  "保持物品整洁有序。",
+  "放松，能很好地应对压力。",
+  "艺术兴趣较少。",
+  "更喜欢让别人来负责或带头。",
+  "尊重他人，以尊重的方式对待别人。",
+  "有毅力，会坚持到任务完成。",
+  "有安全感，对自己感到自在。",
+  "思想复杂，善于深入思考。",
+  "比其他人不那么活跃。",
+  "倾向于挑剔别人、指出别人的问题。",
+  "可能有些粗心。",
+  "脾气易变，容易情绪化。",
+  "创造力较少。",
+];
 
-        // 调节焦点预防型题目
-        const preventionData = [
-            "相对而言，我更关注如何能避免失败。",
-            "比起追求更多的收益，我更注重预防损失。",
-            "我较少考虑如何追求成功，更关注防止不好的事情发生。",
-            "总体而言，预防损失和获取成功，我更在意前者。"
-        ];
+// 自我验证8题
+var selfVerificationData = [
+  "我会坦诚地告诉别人我的习惯和性格，这样他们才能了解我。",
+  "在结识新朋友时，我会选择坦诚地展现真实的自己，即使这会让我显得不够完美。",
+  "在工作时，我会让别人看到真实的自己，即使这意味着会让别人看到我的局限性。",
+  "如果参加面试，我会尽量真实表达自己的性格和工作方式。",
+  "我喜欢做真实的自己，而不是伪装成别人。",
+  "我宁愿别人了解真实的我，也不愿他们对我抱有过高的期望。",
+  "为了能和了解我、清楚对我的期望的人一起工作，我愿意接受较低的薪水。",
+  "在找工作时，我会努力寻找一个能够接纳真实的我的地方。",
+];
 
-        // PDP性格测试题目
-        const pdpData = [
-            "我喜欢快速抓住目标，并推动事情向前。",
-            "我喜欢在团队中表达想法、带动气氛。",
-            "我重视稳定、和谐、让大家都感到舒服。",
-            "做决定前，我希望先看清规则、数据和依据。",
-            "我能根据不同对象和场景调整自己的表达方式。",
-            "面对困难任务时，我倾向于直接行动、解决问题。",
-            "我比较容易主动认识新人或开启话题。",
-            "我愿意耐心倾听别人，把关系照顾好。",
-            "我会注意细节，尽量避免错误和遗漏。",
-            "当计划变化时，我通常能比较快适应。",
-            "需要有人做决定时，我愿意站出来承担责任。",
-            "公开展示、分享或说服别人会让我更有能量。",
-            "我不喜欢太突然、太激烈的变化。",
-            "比起凭感觉行动，我更相信分析和证据。",
-            "我常能把不同人的意见整合成一个可行方案。"
-        ];
+// 促进定向4题
+var promotionData = [
+  "我会经常思考，自己如何能获得成功。",
+  "我会将精力集中在我希望获得成功的事情上。",
+  "我会深入思考，如何能实现自己的愿望和理想。",
+  "总的来说，比起避免失败我更加注重如何获得成功。",
+];
 
-        // PDP类型定义
-        const pdpTypes = {
-            tiger: {
-                name: "老虎型",
-                subtitle: "目标推进者",
-                questions: [1, 6, 11],
-                description: "你是一个目标感很强的人，做事果断、直接，遇到问题时更倾向于快速判断、推动结果。你不太喜欢拖延和模糊不清的安排，通常愿意承担责任，也能在关键时刻做决定。需要注意的是，你的高效率和强推进力有时会让别人感到压力，因此在表达要求时，可以多留意他人的感受和节奏。",
-                color: "#FF6B6B"
-            },
-            peacock: {
-                name: "孔雀型",
-                subtitle: "表达影响者",
-                questions: [2, 7, 12],
-                description: "你擅长表达，也容易带动现场气氛。你热情、外向，喜欢与人互动，能够通过语言、情绪和感染力影响他人。你通常适合承担展示、沟通、协调和激励团队的角色。需要注意的是，你有时可能会更关注想法和氛围，而忽略细节、执行和后续落地，因此可以搭配更清晰的计划来增强结果感。",
-                color: "#4ECDC4"
-            },
-            koala: {
-                name: "考拉型",
-                subtitle: "稳定支持者",
-                questions: [3, 8, 13],
-                description: "你给人的感觉温和、可靠，重视关系，也愿意在团队中提供稳定支持。你通常耐心、包容，不喜欢激烈冲突，更倾向于用平和的方式维持合作。你的优势在于让别人感到安心和被接纳。需要注意的是，当变化太快或冲突出现时，你可能会选择回避，因此可以尝试更主动地表达自己的真实想法。",
-                color: "#45B7D1"
-            },
-            owl: {
-                name: "猫头鹰型",
-                subtitle: "精确分析者",
-                questions: [4, 9, 14],
-                description: "你做事谨慎，重视证据、逻辑和规则。你通常不会轻易下结论，而是希望先把信息看清楚、把风险想明白。你适合处理需要分析、判断、检查和精确执行的任务。需要注意的是，你有时可能因为追求周全而行动较慢，甚至陷入过度分析；在信息足够时，适当推进会让你的判断更有现实价值。",
-                color: "#96CEB4"
-            },
-            chameleon: {
-                name: "变色龙型",
-                subtitle: "弹性整合者",
-                questions: [5, 10, 15],
-                description: "你适应性强，能够根据不同情境调整自己的沟通方式和行动策略。你擅长理解不同人的立场，也能在分歧中寻找平衡点，帮助团队整合意见。你的优势在于灵活、协调和连接。需要注意的是，你有时可能为了适应环境而弱化自己的立场，因此在关键问题上，可以更清楚地表达边界和原则。",
-                color: "#DDA0DD"
-            }
-        };
+// 预防定向4题
+var preventionData = [
+  "相对而言，我更关注如何能避免失败。",
+  "比起追求更多的收益，我更注重预防损失。",
+  "我较少考虑如何追求成功，更关注防止不好的事情发生。",
+  "总体而言，预防损失和获取成功，我更在意前者。",
+];
 
-        // 生成大五人格题目HTML
-        function renderBigFiveQuestions() {
-            const container = document.getElementById('bigFiveQuestions');
-            let html = '';
-            bigFiveData.forEach((q, index) => {
-                html += `
-                    <div class="question">
-                        <div class="question-text">${q.sub}</div>
-                        <div class="options">
-                            ${[1,2,3,4,5].map(val => `
-                                <label class="option">
-                                    <input type="radio" name="bf_${index}" value="${val}" onchange="updateProgress()">
-                                    <span class="option-label">${val}</span>
-                                </label>
-                            `).join('')}
-                        </div>
-                    </div>
-                `;
-            });
-            container.innerHTML = html;
-        }
+// PDP 15题
+var pdpData = [
+  "我喜欢快速抓住目标，并推动事情向前。",
+  "我喜欢在团队中表达想法、带动气氛。",
+  "我重视稳定、和谐、让大家都感到舒服。",
+  "做决定前，我希望先看清规则、数据和依据。",
+  "我能根据不同对象和场景调整自己的表达方式。",
+  "面对困难任务时，我倾向于直接行动、解决问题。",
+  "我比较容易主动认识新人或开启话题。",
+  "我愿意耐心倾听别人，把关系照顾好。",
+  "我会注意细节，尽量避免错误和遗漏。",
+  "当计划变化时，我通常能比较快适应。",
+  "需要有人做决定时，我愿意站出来承担责任。",
+  "公开展示、分享或说服别人会让我更有能量。",
+  "我不喜欢太突然、太激烈的变化。",
+  "比起凭感觉行动，我更相信分析和证据。",
+  "我常能把不同人的意见整合成一个可行方案。",
+];
 
-        // 生成通用题目HTML
-        function renderQuestions(containerId, questions, prefix) {
-            const container = document.getElementById(containerId);
-            let html = '';
-            questions.forEach((q, index) => {
-                html += `
-                    <div class="question">
-                        <div class="question-text">${index + 1}. ${q}</div>
-                        <div class="options">
-                            ${[1,2,3,4,5].map(val => `
-                                <label class="option">
-                                    <input type="radio" name="${prefix}_${index}" value="${val}" onchange="updateProgress()">
-                                    <span class="option-label">${val}</span>
-                                </label>
-                            `).join('')}
-                        </div>
-                    </div>
-                `;
-            });
-            container.innerHTML = html;
-        }
+var optionLabels = ["非常不同意", "不太同意", "中立", "比较同意", "非常同意"];
 
-        // 更新进度条
-        function updateProgress() {
-            const totalQuestions = bigFiveData.length + selfVerificationData.length + 
-                                  promotionData.length + preventionData.length + pdpData.length;
-            let answered = 0;
-            
-            for (let i = 0; i < bigFiveData.length; i++) {
-                if (document.querySelector(`input[name="bf_${i}"]:checked`)) answered++;
-            }
-            for (let i = 0; i < selfVerificationData.length; i++) {
-                if (document.querySelector(`input[name="sv_${i}"]:checked`)) answered++;
-            }
-            for (let i = 0; i < promotionData.length; i++) {
-                if (document.querySelector(`input[name="promo_${i}"]:checked`)) answered++;
-            }
-            for (let i = 0; i < preventionData.length; i++) {
-                if (document.querySelector(`input[name="prevent_${i}"]:checked`)) answered++;
-            }
-            for (let i = 0; i < pdpData.length; i++) {
-                if (document.querySelector(`input[name="pdp_${i}"]:checked`)) answered++;
-            }
-            
-            const progress = (answered / totalQuestions) * 100;
-            document.getElementById('progressBar').style.width = progress + '%';
-        }
 
-        // 反向计分函数
-        function reverseScore(value, isReverse) {
-            if (isReverse) {
-                return 6 - value;
-            }
-            return value;
-        }
+function renderQuestions(containerId, data, prefix) {
+  var html = '';
+  for (var i = 0; i < data.length; i++) {
+    html += '<div class="question-block">';
+    html += '<p class="question-text">' + (i + 1) + '. ' + data[i] + '</p>';
+    html += '<div class="options">';
+    for (var j = 1; j <= 5; j++) {
+      html += '<label><input type="radio" name="' + prefix + i + '" value="' + j + '"> ' + optionLabels[j - 1] + '</label>';
+    }
+    html += '</div></div>';
+  }
+  document.getElementById(containerId).innerHTML = html;
+}
 
-        // 计算结果
-        function calculateResults() {
-            // 大五人格评分
-            const dimensions = { 外倾性: [], 随和性: [], 责任心: [], 情绪性: [], 开放性: [] };
-            
-            bigFiveData.forEach((q, index) => {
-                const selected = document.querySelector(`input[name="bf_${index}"]:checked`);
-                if (selected) {
-                    const score = reverseScore(parseInt(selected.value), q.reverse);
-                    dimensions[q.dimension].push(score);
-                }
-            });
+renderQuestions('bfQuestions', bigFiveData, 'bf_');
+renderQuestions('svQuestions', selfVerificationData, 'sv_');
+renderQuestions('promoQuestions', promotionData, 'promo_');
+renderQuestions('preventQuestions', preventionData, 'prevent_');
+renderQuestions('pdpQuestions', pdpData, 'pdp_');
 
-            const dimAverages = {};
-            for (const dim in dimensions) {
-                const scores = dimensions[dim];
-                dimAverages[dim] = scores.length > 0 ? scores.reduce((a,b) => a+b, 0) / scores.length : 0;
-            }
 
-            // 自我验证追求评分
-            const svScores = [];
-            for (let i = 0; i < selfVerificationData.length; i++) {
-                const selected = document.querySelector(`input[name="sv_${i}"]:checked`);
-                if (selected) svScores.push(parseInt(selected.value));
-            }
-            const svTotal = svScores.length > 0 ? svScores.reduce((a,b) => a+b, 0) : 0;
+// 大五人格维度分布
+// 外倾性: 1R,6,11,16,21R,26R -> 索引0,5,10,15,20,25
+// 随和性: 2,7R,12,17R,22,27R -> 索引1,6,11,16,21,26
+// 责任心: 3R,8R,13,18,23,28R -> 索引2,7,12,17,22,27
+// 情绪性: 4,9,14R,19R,24R,29 -> 索引3,8,13,18,23,28
+// 开放性: 5,10R,15,20R,25,30R -> 索引4,9,14,19,24,29
 
-            // 调节焦点评分
-            const promoScores = [];
-            for (let i = 0; i < promotionData.length; i++) {
-                const selected = document.querySelector(`input[name="promo_${i}"]:checked`);
-                if (selected) promoScores.push(parseInt(selected.value));
-            }
-            const promoTotal = promoScores.length > 0 ? promoScores.reduce((a,b) => a+b, 0) : 0;
+var bigFiveDimensions = {
+  '外向性': { indices: [0,5,10,15,20,25], reverse: [true,false,false,false,true,true] },
+  '随和性': { indices: [1,6,11,16,21,26], reverse: [false,true,false,true,false,true] },
+  '责任心': { indices: [2,7,12,17,22,27], reverse: [true,true,false,false,false,true] },
+  '情绪性': { indices: [3,8,13,18,23,28], reverse: [false,false,true,true,true,false] },
+  '开放性': { indices: [4,9,14,19,24,29], reverse: [false,true,false,true,false,true] }
+};
 
-            const preventScores = [];
-            for (let i = 0; i < preventionData.length; i++) {
-                const selected = document.querySelector(`input[name="prevent_${i}"]:checked`);
-                if (selected) preventScores.push(parseInt(selected.value));
-            }
-            const preventTotal = preventScores.length > 0 ? preventScores.reduce((a,b) => a+b, 0) : 0;
+function getAnswer(prefix, index) {
+  var el = document.querySelector('input[name="' + prefix + index + '"]:checked');
+  return el ? parseInt(el.value) : 0;
+}
 
-            // PDP评分
-            const pdpScores = {};
-            for (const type in pdpTypes) {
-                const scores = [];
-                pdpTypes[type].questions.forEach(qIndex => {
-                    const selected = document.querySelector(`input[name="pdp_${qIndex-1}"]:checked`);
-                    if (selected) scores.push(parseInt(selected.value));
-                });
-                pdpScores[type] = scores.length > 0 ? scores.reduce((a,b) => a+b, 0) : 0;
-            }
+function calcAvg(prefix, len) {
+  var sum = 0, count = 0;
+  for (var i = 0; i < len; i++) {
+    var val = getAnswer(prefix, i);
+    if (val > 0) { sum += val; count++; }
+  }
+  return count > 0 ? sum / count : 0;
+}
 
-            return {
-                bigFive: dimAverages,
-                selfVerification: svTotal,
-                promotion: promoTotal,
-                prevention: preventTotal,
-                pdp: pdpScores
-            };
-        }
+function calcBigFiveScores() {
+  var scores = {};
+  for (var dimName in bigFiveDimensions) {
+    var dim = bigFiveDimensions[dimName];
+    var sum = 0, count = 0;
+    for (var i = 0; i < dim.indices.length; i++) {
+      var idx = dim.indices[i];
+      var val = getAnswer('bf_', idx);
+      if (val > 0) {
+        if (dim.reverse[i]) { val = 6 - val; }
+        sum += val; count++;
+      }
+    }
+    scores[dimName] = count > 0 ? (sum / count / 5) * 100 : 0;
+  }
+  return scores;
+}
 
-        // 生成动物SVG图标
-        function getAnimalSVG(type, size = 120) {
-            const svgs = {
-                tiger: `<svg width="${size}" height="${size}" viewBox="0 0 100 100">
-                    <circle cx="50" cy="50" r="45" fill="#FF8C00"/>
-                    <circle cx="50" cy="50" r="35" fill="#FFA500"/>
-                    <circle cx="35" cy="40" r="5" fill="#333"/>
-                    <circle cx="65" cy="40" r="5" fill="#333"/>
-                    <ellipse cx="50" cy="55" rx="8" ry="6" fill="#333"/>
-                    <path d="M30 30 Q50 20 70 30" stroke="#333" stroke-width="3" fill="none"/>
-                    <path d="M25 25 L35 35" stroke="#333" stroke-width="2"/>
-                    <path d="M75 25 L65 35" stroke="#333" stroke-width="2"/>
-                    <path d="M35 65 Q50 75 65 65" stroke="#333" stroke-width="2" fill="none"/>
-                    <line x1="30" y1="50" x2="20" y2="45" stroke="#333" stroke-width="2"/>
-                    <line x1="30" y1="55" x2="20" y2="55" stroke="#333" stroke-width="2"/>
-                    <line x1="70" y1="50" x2="80" y2="45" stroke="#333" stroke-width="2"/>
-                    <line x1="70" y1="55" x2="80" y2="55" stroke="#333" stroke-width="2"/>
-                </svg>`,
-                peacock: `<svg width="${size}" height="${size}" viewBox="0 0 100 100">
-                    <ellipse cx="50" cy="60" rx="20" ry="30" fill="#4ECDC4"/>
-                    <circle cx="50" cy="35" r="15" fill="#4ECDC4"/>
-                    <circle cx="45" cy="32" r="3" fill="#333"/>
-                    <circle cx="55" cy="32" r="3" fill="#333"/>
-                    <polygon points="50,20 47,28 53,28" fill="#FF6B6B"/>
-                    <path d="M30 60 Q20 40 35 35" stroke="#4ECDC4" stroke-width="3" fill="none"/>
-                    <path d="M70 60 Q80 40 65 35" stroke="#4ECDC4" stroke-width="3" fill="none"/>
-                    <circle cx="35" cy="35" r="5" fill="#96CEB4"/>
-                    <circle cx="65" cy="35" r="5" fill="#96CEB4"/>
-                    <circle cx="50" cy="25" r="4" fill="#DDA0DD"/>
-                    <path d="M45 70 L50 80 L55 70" stroke="#FF6B6B" stroke-width="2" fill="none"/>
-                </svg>`,
-                koala: `<svg width="${size}" height="${size}" viewBox="0 0 100 100">
-                    <circle cx="50" cy="50" r="40" fill="#B8C5D6"/>
-                    <circle cx="50" cy="50" r="35" fill="#D6E4F0"/>
-                    <circle cx="35" cy="40" r="8" fill="#8BA5C0"/>
-                    <circle cx="65" cy="40" r="8" fill="#8BA5C0"/>
-                    <circle cx="35" cy="38" r="4" fill="#333"/>
-                    <circle cx="65" cy="38" r="4" fill="#333"/>
-                    <ellipse cx="50" cy="55" rx="12" ry="8" fill="#8BA5C0"/>
-                    <circle cx="50" cy="52" r="3" fill="#333"/>
-                    <path d="M45 60 Q50 65 55 60" stroke="#333" stroke-width="2" fill="none"/>
-                    <circle cx="25" cy="30" r="8" fill="#B8C5D6"/>
-                    <circle cx="75" cy="30" r="8" fill="#B8C5D6"/>
-                </svg>`,
-                owl: `<svg width="${size}" height="${size}" viewBox="0 0 100 100">
-                    <ellipse cx="50" cy="55" rx="30" ry="35" fill="#96CEB4"/>
-                    <circle cx="50" cy="40" r="25" fill="#96CEB4"/>
-                    <circle cx="38" cy="35" r="12" fill="white"/>
-                    <circle cx="62" cy="35" r="12" fill="white"/>
-                    <circle cx="38" cy="35" r="6" fill="#333"/>
-                    <circle cx="62" cy="35" r="6" fill="#333"/>
-                    <polygon points="50,42 47,48 53,48" fill="#FF8C00"/>
-                    <path d="M30 25 L35 30" stroke="#96CEB4" stroke-width="3"/>
-                    <path d="M70 25 L65 30" stroke="#96CEB4" stroke-width="3"/>
-                    <path d="M40 65 Q50 75 60 65" stroke="#333" stroke-width="2" fill="none"/>
-                    <line x1="45" y1="70" x2="55" y2="70" stroke="#333" stroke-width="2"/>
-                </svg>`,
-                chameleon: `<svg width="${size}" height="${size}" viewBox="0 0 100 100">
-                    <ellipse cx="50" cy="55" rx="35" ry="25" fill="#DDA0DD"/>
-                    <circle cx="50" cy="40" r="20" fill="#DDA0DD"/>
-                    <circle cx="40" cy="35" r="8" fill="white"/>
-                    <circle cx="60" cy="35" r="8" fill="white"/>
-                    <circle cx="40" cy="35" r="4" fill="#333"/>
-                    <circle cx="60" cy="35" r="4" fill="#333"/>
-                    <path d="M30 50 Q50 65 70 50" stroke="#9B59B6" stroke-width="3" fill="none"/>
-                    <path d="M20 60 Q30 70 40 60" stroke="#DDA0DD" stroke-width="3" fill="none"/>
-                    <path d="M60 60 Q70 70 80 60" stroke="#DDA0DD" stroke-width="3" fill="none"/>
-                    <circle cx="25" cy="30" r="5" fill="#9B59B6"/>
-                    <circle cx="75" cy="30" r="5" fill="#9B59B6"/>
-                </svg>`
-            };
-            return svgs[type] || '';
-        }
+function calcSelfVerification() { return calcAvg('sv_', selfVerificationData.length); }
+function calcPromotion() { return calcAvg('promo_', promotionData.length); }
+function calcPrevention() { return calcAvg('prevent_', preventionData.length); }
 
-        // 显示结果
-        function showResults(results) {
-            document.getElementById('testForm').style.display = 'none';
-            document.getElementById('results').style.display = 'block';
+function calcPDP() {
+  var tiger = (getAnswer('pdp_',0)+getAnswer('pdp_',5)+getAnswer('pdp_',10))/3;
+  var peacock = (getAnswer('pdp_',1)+getAnswer('pdp_',6)+getAnswer('pdp_',11))/3;
+  var koala = (getAnswer('pdp_',2)+getAnswer('pdp_',7)+getAnswer('pdp_',12))/3;
+  var owl = (getAnswer('pdp_',3)+getAnswer('pdp_',8)+getAnswer('pdp_',13))/3;
+  var chameleon = (getAnswer('pdp_',4)+getAnswer('pdp_',9)+getAnswer('pdp_',14))/3;
+  return { '老虎型':tiger, '孔雀型':peacock, '考拉型':koala, '猫头鹰型':owl, '变色龙型':chameleon };
+}
 
-            // 大五人格雷达图
-            const ctx = document.getElementById('bigFiveChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'radar',
-                data: {
-                    labels: ['外倾性', '随和性', '责任心', '情绪性', '开放性'],
-                    datasets: [{
-                        label: '大五人格得分',
-                        data: [
-                            results.bigFive.外倾性 || 0,
-                            results.bigFive.随和性 || 0,
-                            results.bigFive.责任心 || 0,
-                            results.bigFive.情绪性 || 0,
-                            results.bigFive.开放性 || 0
-                        ],
-                        backgroundColor: 'rgba(102, 126, 234, 0.2)',
-                        borderColor: '#667eea',
-                        borderWidth: 2,
-                        pointBackgroundColor: '#667eea',
-                        pointBorderColor: '#fff',
-                        pointBorderWidth: 2
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        r: {
-                            beginAtZero: true,
-                            max: 5,
-                            ticks: { stepSize: 1 }
-                        }
-                    }
-                }
-            });
 
-            // 大五人格进度条
-            const scoresContainer = document.getElementById('bigFiveScores');
-            const dimNames = ['外倾性', '随和性', '责任心', '情绪性', '开放性'];
-            let scoresHtml = '';
-            dimNames.forEach(dim => {
-                const score = results.bigFive[dim] || 0;
-                scoresHtml += `
-                    <div class="score-bar">
-                        <div class="score-label">
-                            <span>${dim}</span>
-                            <span>${score.toFixed(1)}</span>
-                        </div>
-                        <div class="bar-bg">
-                            <div class="bar-fill" style="width: ${(score/5)*100}%"></div>
-                        </div>
-                    </div>
-                `;
-            });
-            scoresContainer.innerHTML = scoresHtml;
+var animalDescriptions = {
+  '老虎型': {
+    title: '老虎型｜目标推进者',
+    desc: '你是一个目标感很强的人，做事果断、直接，遇到问题时更倾向于快速判断、推动结果。你不太喜欢拖延和模糊不清的安排，通常愿意承担责任，也能在关键时刻做决定。需要注意的是，你的高效率和强推进力有时会让别人感到压力，因此在表达要求时，可以多留意他人的感受和节奏。'
+  },
+  '孔雀型': {
+    title: '孔雀型｜表达影响者',
+    desc: '你擅长表达，也容易带动现场气氛。你热情、外向，喜欢与人互动，能够通过语言、情绪和感染力影响他人。你通常适合承担展示、沟通、协调和激励团队的角色。需要注意的是，你有时可能会更关注想法和氛围，而忽略细节、执行和后续落地，因此可以搭配更清晰的计划来增强结果感。'
+  },
+  '考拉型': {
+    title: '考拉型｜稳定支持者',
+    desc: '你给人的感觉温和、可靠，重视关系，也愿意在团队中提供稳定支持。你通常耐心、包容，不喜欢激烈冲突，更倾向于用平和的方式维持合作。你的优势在于让别人感到安心和被接纳。需要注意的是，当变化太快或冲突出现时，你可能会选择回避，因此可以尝试更主动地表达自己的真实想法。'
+  },
+  '猫头鹰型': {
+    title: '猫头鹰型｜精确分析者',
+    desc: '你做事谨慎，重视证据、逻辑和规则。你通常不会轻易下结论，而是希望先把信息看清楚、把风险想明白。你适合处理需要分析、判断、检查和精确执行的任务。需要注意的是，你有时可能因为追求周全而行动较慢，甚至陷入过度分析；在信息足够时，适当推进会让你的判断更有现实价值。'
+  },
+  '变色龙型': {
+    title: '变色龙型｜弹性整合者',
+    desc: '你适应性强，能够根据不同情境调整自己的沟通方式和行动策略。你擅长理解不同人的立场，也能在分歧中寻找平衡点，帮助团队整合意见。你的优势在于灵活、协调和连接。需要注意的是，你有时可能为了适应环境而弱化自己的立场，因此在关键问题上，可以更清楚地表达边界和原则。'
+  }
+};
 
-            // PDP得分卡片
-            const pdpContainer = document.getElementById('pdpScores');
-            const maxScore = Math.max(...Object.values(results.pdp));
-            let pdpHtml = '';
-            for (const type in pdpTypes) {
-                const isHighlight = results.pdp[type] === maxScore;
-                pdpHtml += `
-                    <div class="pdp-card ${isHighlight ? 'highlight' : ''}">
-                        <div class="animal-icon">${getAnimalSVG(type, 60)}</div>
-                        <h4>${pdpTypes[type].name}</h4>
-                        <div class="score">${results.pdp[type]}</div>
-                    </div>
-                `;
-            }
-            pdpContainer.innerHTML = pdpHtml;
+function getAnimalResult(pdpScores) {
+  var animals = [];
+  for (var name in pdpScores) {
+    animals.push({ name: name, score: pdpScores[name] });
+  }
+  animals.sort(function(a, b) { return b.score - a.score; });
+  return animals;
+}
 
-            // 主导类型展示
-            const dominantType = Object.keys(results.pdp).reduce((a, b) => 
-                results.pdp[a] > results.pdp[b] ? a : b
-            );
-            const animalDisplay = document.getElementById('animalDisplay');
-            animalDisplay.innerHTML = `
-                <div class="animal-icon">${getAnimalSVG(dominantType, 120)}</div>
-                <div class="animal-name">${pdpTypes[dominantType].name}</div>
-                <div class="animal-name" style="font-size: 1.2em; color: #764ba2;">${pdpTypes[dominantType].subtitle}</div>
-                <div class="animal-desc">${pdpTypes[dominantType].description}</div>
-            `;
 
-            // 所有类型描述
-            const descContainer = document.getElementById('animalDescriptions');
-            let descHtml = '<h3 style="margin: 30px 0 20px; color: #667eea;">五种性格类型详解</h3>';
-            for (const type in pdpTypes) {
-                descHtml += `
-                    <div class="section" style="margin: 15px 0;">
-                        <div style="display: flex; align-items: center; gap: 15px;">
-                            <div style="flex-shrink: 0;">${getAnimalSVG(type, 50)}</div>
-                            <div>
-                                <h4 style="color: ${pdpTypes[type].color}; margin-bottom: 8px;">
-                                    ${pdpTypes[type].name} | ${pdpTypes[type].subtitle}
-                                </h4>
-                                <p style="line-height: 1.6; color: #555;">${pdpTypes[type].description}</p>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
-            descContainer.innerHTML = descHtml;
+function drawRadar(scores) {
+  var canvas = document.getElementById('radarCanvas');
+  var ctx = canvas.getContext('2d');
+  var W = canvas.width, H = canvas.height;
+  var cx = W / 2, cy = H / 2, R = Math.min(cx, cy) - 50;
+  ctx.clearRect(0, 0, W, H);
 
-            // 保存表单数据
-            document.getElementById('formData').value = JSON.stringify(results);
-        }
+  var labels = ['外向性', '随和性', '责任心', '情绪性', '开放性'];
+  var keys = ['外向性', '随和性', '责任心', '情绪性', '开放性'];
+  var n = 5;
 
-        // 页面加载时渲染题目
-        document.addEventListener('DOMContentLoaded', function() {
-            renderBigFiveQuestions();
-            renderQuestions('selfVerificationQuestions', selfVerificationData, 'sv');
-            renderQuestions('promotionQuestions', promotionData, 'promo');
-            renderQuestions('preventionQuestions', preventionData, 'prevent');
-            renderQuestions('pdpQuestions', pdpData, 'pdp');
-        });
+  for (var level = 1; level <= 5; level++) {
+    var r = R * level / 5;
+    ctx.beginPath();
+    for (var i = 0; i <= n; i++) {
+      var angle = (Math.PI * 2 * i / n) - Math.PI / 2;
+      var x = cx + r * Math.cos(angle);
+      var y = cy + r * Math.sin(angle);
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+    ctx.strokeStyle = '#e0e0e0';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
 
-        // 表单提交处理（唯一的事件监听器）
-        document.getElementById('testForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const btn = document.getElementById('submitBtn');
-            const status = document.getElementById('submitStatus');
-            
-            btn.disabled = true;
-            btn.textContent = '正在提交...';
-            status.textContent = '';
-            
-            // 验证所有题目已回答
-            const allAnswered = [];
-            for (let i = 0; i < bigFiveData.length; i++) {
-                allAnswered.push(!!document.querySelector(`input[name="bf_${i}"]:checked`));
-            }
-            for (let i = 0; i < selfVerificationData.length; i++) {
-                allAnswered.push(!!document.querySelector(`input[name="sv_${i}"]:checked`));
-            }
-            for (let i = 0; i < promotionData.length; i++) {
-                allAnswered.push(!!document.querySelector(`input[name="promo_${i}"]:checked`));
-            }
-            for (let i = 0; i < preventionData.length; i++) {
-                allAnswered.push(!!document.querySelector(`input[name="prevent_${i}"]:checked`));
-            }
-            for (let i = 0; i < pdpData.length; i++) {
-                allAnswered.push(!!document.querySelector(`input[name="pdp_${i}"]:checked`));
-            }
-            
-            if (allAnswered.includes(false)) {
-                btn.disabled = false;
-                btn.textContent = '提交并查看结果';
-                status.textContent = '请回答所有题目后再提交';
-                alert('请回答所有题目后再提交');
-                return;
-            }
+  for (var i = 0; i < n; i++) {
+    var angle = (Math.PI * 2 * i / n) - Math.PI / 2;
+    var x = cx + R * Math.cos(angle);
+    var y = cy + R * Math.sin(angle);
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(x, y);
+    ctx.strokeStyle = '#ccc';
+    ctx.lineWidth = 1;
+    ctx.stroke();
 
-            // 计算并显示结果
-            const results = calculateResults();
-            showResults(results);
+    var lx = cx + (R + 30) * Math.cos(angle);
+    var ly = cy + (R + 30) * Math.sin(angle);
+    ctx.fillStyle = '#555';
+    ctx.font = '14px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(labels[i], lx, ly);
+  }
 
-            // 发送到Web3Forms
-            const formData = new FormData(this);
-            
-            try {
-                const res = await fetch('https://api.web3forms.com/submit', {
-                    method: 'POST',
-                    body: formData
-                });
-                const data = await res.json();
-                if (data.success) {
-                    status.textContent = '已提交，邮件稍后到达你的邮箱。';
-                } else {
-                    status.textContent = '提交失败：' + (data.message || '请检查网络后重试');
-                }
-            } catch (err) {
-                status.textContent = '提交失败，请检查网络或稍后重试。';
-            }
-            
-            btn.disabled = false;
-            btn.textContent = '提交并查看结果';
-        });
-    </script>
+  ctx.beginPath();
+  for (var i = 0; i <= n; i++) {
+    var idx = i % n;
+    var angle = (Math.PI * 2 * idx / n) - Math.PI / 2;
+    var val = Math.min(scores[keys[idx]] / 100, 1);
+    var r = R * val;
+    var x = cx + r * Math.cos(angle);
+    var y = cy + r * Math.sin(angle);
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  }
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(102, 126, 234, 0.25)';
+  ctx.fill();
+  ctx.strokeStyle = '#667eea';
+  ctx.lineWidth = 2.5;
+  ctx.stroke();
+
+  for (var i = 0; i < n; i++) {
+    var angle = (Math.PI * 2 * i / n) - Math.PI / 2;
+    var val = Math.min(scores[keys[i]] / 100, 1);
+    var r = R * val;
+    var x = cx + r * Math.cos(angle);
+    var y = cy + r * Math.sin(angle);
+    ctx.beginPath();
+    ctx.arc(x, y, 5, 0, Math.PI * 2);
+    ctx.fillStyle = '#667eea';
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }
+}
+
+
+function showResults() {
+  var bigFiveScores = calcBigFiveScores();
+  var svScore = calcSelfVerification();
+  var promoScore = calcPromotion();
+  var preventScore = calcPrevention();
+  var pdpScores = calcPDP();
+  var animalRanking = getAnimalResult(pdpScores);
+
+  drawRadar(bigFiveScores);
+
+  var mainAnimal = animalRanking[0];
+  var animalInfo = animalDescriptions[mainAnimal.name];
+  document.getElementById('animalIcon').textContent = getAnimalEmoji(mainAnimal.name);
+  document.getElementById('animalName').textContent = animalInfo.title;
+  document.getElementById('animalDesc').textContent = animalInfo.desc;
+
+  var colors = { '外向性':'#667eea', '随和性':'#10b981', '责任心':'#f59e0b', '情绪性':'#ec4899', '开放性':'#8b5cf6' };
+  var bfKeys = ['外向性', '随和性', '责任心', '情绪性', '开放性'];
+  var html = '<h3 style="margin:20px 0 12px;color:#333;">大五人格得分</h3>';
+  for (var i = 0; i < bfKeys.length; i++) {
+    var k = bfKeys[i];
+    var v = Math.round(bigFiveScores[k]);
+    html += '<div class="score-bar-container">';
+    html += '<div class="score-bar-label"><span>' + k + '</span><span>' + v + '</span></div>';
+    html += '<div class="score-bar"><div class="score-bar-fill" style="width:' + v + '%;background:' + colors[k] + '"></div></div>';
+    html += '</div>';
+  }
+
+  html += '<h3 style="margin:20px 0 12px;color:#333;">PDP动物人格得分</h3>';
+  var animalColors = { '老虎型':'#ef4444', '孔雀型':'#f59e0b', '考拉型':'#10b981', '猫头鹰型':'#6366f1', '变色龙型':'#ec4899' };
+  for (var i = 0; i < animalRanking.length; i++) {
+    var a = animalRanking[i];
+    var v = Math.round(a.score / 5 * 100);
+    html += '<div class="score-bar-container">';
+    html += '<div class="score-bar-label"><span>' + a.name + '</span><span>' + Math.round(a.score * 20) + '/100</span></div>';
+    html += '<div class="score-bar"><div class="score-bar-fill" style="width:' + v + '%;background:' + animalColors[a.name] + '"></div></div>';
+    html += '</div>';
+  }
+
+  html += '<h3 style="margin:20px 0 12px;color:#333;">其他维度得分</h3>';
+  html += '<div class="score-bar-container">';
+  html += '<div class="score-bar-label"><span>自我验证追求</span><span>' + Math.round(svScore / 5 * 100) + '/100</span></div>';
+  html += '<div class="score-bar"><div class="score-bar-fill" style="width:' + Math.round(svScore / 5 * 100) + '%;background:#667eea"></div></div>';
+  html += '</div>';
+  html += '<div class="score-bar-container">';
+  html += '<div class="score-bar-label"><span>促进定向</span><span>' + Math.round(promoScore / 5 * 100) + '/100</span></div>';
+  html += '<div class="score-bar"><div class="score-bar-fill" style="width:' + Math.round(promoScore / 5 * 100) + '%;background:#10b981"></div></div>';
+  html += '</div>';
+  html += '<div class="score-bar-container">';
+  html += '<div class="score-bar-label"><span>预防定向</span><span>' + Math.round(preventScore / 5 * 100) + '/100</span></div>';
+  html += '<div class="score-bar"><div class="score-bar-fill" style="width:' + Math.round(preventScore / 5 * 100) + '%;background:#f59e0b"></div></div>';
+  html += '</div>';
+
+  document.getElementById('scoreBars').innerHTML = html;
+
+  var detailHtml = '<h3 style="margin:20px 0 12px;color:#333;">动物人格详细解读</h3>';
+  for (var i = 0; i < animalRanking.length; i++) {
+    var a = animalRanking[i];
+    var info = animalDescriptions[a.name];
+    var rank = i === 0 ? '(主导)' : (i === 1 ? '(辅助)' : '');
+    detailHtml += '<div class="animal-detail">';
+    detailHtml += '<h3>' + a.name + '型 ' + rank + '</h3>';
+    detailHtml += '<p>' + info.desc + '</p>';
+    detailHtml += '</div>';
+  }
+  document.getElementById('animalDetails').innerHTML = detailHtml;
+
+  document.getElementById('testForm').style.display = 'none';
+  document.getElementById('resultPage').style.display = 'block';
+  window.scrollTo(0, 0);
+}
+
+function getAnimalEmoji(name) {
+  var emojis = { '老虎型':'\u{1F405}', '孔雀型':'\u{1F99A}', '考拉型':'\u{1F43A}', '猫头鹰型':'\u{1F989}', '变色龙型':'\u{1F98E}' };
+  return emojis[name] || '';
+}
+
+
+document.getElementById('testForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+
+  var btn = document.getElementById('submitBtn');
+  var status = document.getElementById('submitStatus');
+
+  btn.disabled = true;
+  btn.textContent = '正在提交...';
+  status.textContent = '';
+
+  var allAnswered = true;
+  var allPrefixes = [
+    { p: 'bf_', len: bigFiveData.length },
+    { p: 'sv_', len: selfVerificationData.length },
+    { p: 'promo_', len: promotionData.length },
+    { p: 'prevent_', len: preventionData.length },
+    { p: 'pdp_', len: pdpData.length }
+  ];
+  for (var k = 0; k < allPrefixes.length; k++) {
+    for (var i = 0; i < allPrefixes[k].len; i++) {
+      if (!document.querySelector('input[name="' + allPrefixes[k].p + i + '"]:checked')) {
+        allAnswered = false; break;
+      }
+    }
+    if (!allAnswered) break;
+  }
+
+  if (!allAnswered) {
+    btn.disabled = false;
+    btn.textContent = '提交结果';
+    alert('请回答所有题目后再提交');
+    return;
+  }
+
+  showResults();
+
+  var fieldMap = {
+    'bf_': '大五人格第',
+    'sv_': '自我验证第',
+    'promo_': '促进定向第',
+    'prevent_': '预防定向第',
+    'pdp_': 'PDP第'
+  };
+  var formData = new FormData(this);
+  var newFormData = new FormData();
+  for (var pair of formData.entries()) {
+    var key = pair[0];
+    var val = pair[1];
+    var matched = false;
+    for (var prefix in fieldMap) {
+      if (key.indexOf(prefix) === 0) {
+        var num = key.replace(prefix, '');
+        newFormData.append(fieldMap[prefix] + (parseInt(num) + 1) + '题', val);
+        matched = true;
+        break;
+      }
+    }
+    if (!matched) {
+      newFormData.append(key, val);
+    }
+  }
+
+  try {
+    var res = await fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      body: newFormData
+    });
+    var data = await res.json();
+    if (data.success) {
+      status.textContent = '已提交，结果已发送到邮箱。';
+    } else {
+      status.textContent = '提交失败：' + (data.message || '请检查网络后重试');
+    }
+  } catch (err) {
+    status.textContent = '提交失败，请检查网络或稍后重试。';
+  }
+
+  btn.disabled = false;
+  btn.textContent = '提交结果';
+});
+</script>
 </body>
 </html>
