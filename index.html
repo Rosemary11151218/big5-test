@@ -143,7 +143,7 @@ body {
   </div>
 </div>
 <script>
-// 大五人格30题
+// ====== 题目数据 ======
 var bigFiveData = [
   "我是一个倾向于安静寡言的人。",
   "富我是一个有同情心，心肠柔软的人。",
@@ -177,7 +177,6 @@ var bigFiveData = [
   "我是一个创造力较少的人。",
 ];
 
-// 自我验证8题
 var selfVerificationData = [
   "我会坦诚地告诉别人我的习惯和性格，这样他们才能了解我。",
   "在结识新朋友时，我会选择坦诚地展现真实的自己，即使这会让我显得不够完美。",
@@ -189,7 +188,6 @@ var selfVerificationData = [
   "在找工作时，我会努力寻找一个能够接纳真实的我的地方。",
 ];
 
-// 促进定向4题
 var promotionData = [
   "我会经常思考，自己如何能获得成功。",
   "我会将精力集中在我希望获得成功的事情上。",
@@ -197,7 +195,6 @@ var promotionData = [
   "总的来说，比起避免失败我更加注重如何获得成功。",
 ];
 
-// 预防定向4题
 var preventionData = [
   "相对而言，我更关注如何能避免失败。",
   "比起追求更多的收益，我更注重预防损失。",
@@ -205,7 +202,6 @@ var preventionData = [
   "总体而言，预防损失和获取成功，我更在意前者。",
 ];
 
-// PDP 15题
 var pdpData = [
   "我喜欢快速抓住目标，并推动事情向前。",
   "我喜欢在团队中表达想法、带动气氛。",
@@ -225,9 +221,8 @@ var pdpData = [
 ];
 
 var optionLabels = ["1", "2", "3", "4", "5"];
-var optionDescriptions = ["非常不同意", "不太同意", "中立", "比较同意", "非常同意"];
 
-
+// ====== 渲染题目 ======
 function renderQuestions(containerId, data, prefix) {
   var html = '';
   for (var i = 0; i < data.length; i++) {
@@ -248,14 +243,7 @@ renderQuestions('promoQuestions', promotionData, 'promo_');
 renderQuestions('preventQuestions', preventionData, 'prevent_');
 renderQuestions('pdpQuestions', pdpData, 'pdp_');
 
-
-// 大五人格维度分布
-// 外倾性: 1R,6,11,16,21R,26R -> 索引0,5,10,15,20,25
-// 随和性: 2,7R,12,17R,22,27R -> 索引1,6,11,16,21,26
-// 责任心: 3R,8R,13,18,23,28R -> 索引2,7,12,17,22,27
-// 情绪性: 4,9,14R,19R,24R,29 -> 索引3,8,13,18,23,28
-// 开放性: 5,10R,15,20R,25,30R -> 索引4,9,14,19,24,29
-
+// ====== 大五人格维度分布 ======
 var bigFiveDimensions = {
   '外向性': { indices: [0,5,10,15,20,25], reverse: [true,false,false,false,true,true] },
   '随和性': { indices: [1,6,11,16,21,26], reverse: [false,true,false,true,false,true] },
@@ -278,6 +266,7 @@ function calcAvg(prefix, len) {
   return count > 0 ? sum / count : 0;
 }
 
+// ====== 计算所有分数 ======
 function calcBigFiveScores() {
   var scores = {};
   for (var dimName in bigFiveDimensions) {
@@ -309,7 +298,7 @@ function calcPDP() {
   return { '老虎型':tiger, '孔雀型':peacock, '考拉型':koala, '猫头鹰型':owl, '变色龙型':chameleon };
 }
 
-
+// ====== 动物人格描述 ======
 var animalDescriptions = {
   '老虎型': {
     title: '老虎型｜目标推进者',
@@ -333,7 +322,7 @@ var animalDescriptions = {
   }
 };
 
-function getAnimalResult(pdpScores) {
+function getAnimalRanking(pdpScores) {
   var animals = [];
   for (var name in pdpScores) {
     animals.push({ name: name, score: pdpScores[name] });
@@ -342,7 +331,31 @@ function getAnimalResult(pdpScores) {
   return animals;
 }
 
+// ====== 大五人格维度个性化解释 ======
+var traitComments = {
+  '外向性': {
+    high: '你热情外向，享受社交场合，喜欢与人互动，充满活力。',
+    low: '你更享受独处的时光，内敛沉静，在安静中积蓄能量。'
+  },
+  '随和性': {
+    high: '你友善温和，乐于助人，重视和谐的人际关系。',
+    low: '你独立果断，更关注自己的目标，不轻易妥协。'
+  },
+  '责任心': {
+    high: '你是一个责任心很高的人，做事认真负责，有条理且自律。',
+    low: '你比较随性自由，不喜欢被条条框框束缚，灵活应变。'
+  },
+  '情绪性': {
+    high: '你情感丰富细腻，对环境和情绪变化比较敏感。',
+    low: '你情绪稳定从容，面对压力也能保持冷静和淡定。'
+  },
+  '开放性': {
+    high: '你充满好奇心和想象力，喜欢探索新事物，思维活跃而开放。',
+    low: '你更偏好熟悉和稳定的事物，务实踏实，注重实际经验。'
+  }
+};
 
+// ====== 绘制雷达图 ======
 function drawRadar(scores) {
   var canvas = document.getElementById('radarCanvas');
   var ctx = canvas.getContext('2d');
@@ -354,6 +367,7 @@ function drawRadar(scores) {
   var keys = ['外向性', '随和性', '责任心', '情绪性', '开放性'];
   var n = 5;
 
+  // 画背景网格
   for (var level = 1; level <= 5; level++) {
     var r = R * level / 5;
     ctx.beginPath();
@@ -369,6 +383,7 @@ function drawRadar(scores) {
     ctx.stroke();
   }
 
+  // 画轴线和标签
   for (var i = 0; i < n; i++) {
     var angle = (Math.PI * 2 * i / n) - Math.PI / 2;
     var x = cx + R * Math.cos(angle);
@@ -389,6 +404,7 @@ function drawRadar(scores) {
     ctx.fillText(labels[i], lx, ly);
   }
 
+  // 画数据多边形
   ctx.beginPath();
   for (var i = 0; i <= n; i++) {
     var idx = i % n;
@@ -406,6 +422,7 @@ function drawRadar(scores) {
   ctx.lineWidth = 2.5;
   ctx.stroke();
 
+  // 画数据点
   for (var i = 0; i < n; i++) {
     var angle = (Math.PI * 2 * i / n) - Math.PI / 2;
     var val = Math.min(scores[keys[i]] / 100, 1);
@@ -422,99 +439,78 @@ function drawRadar(scores) {
   }
 }
 
+// ====== 显示结果 ======
+function showResults(bfScores, pdpScores, svScore, promoScore, preventScore) {
+  // 1. 绘制雷达图
+  drawRadar(bfScores);
 
-function showResults(scores) {
-  // 雷达图
-  drawRadar(scores);
+  // 2. 动物人格（取PDP最高分）
+  var animalRanking = getAnimalRanking(pdpScores);
+  var topAnimal = animalRanking[0];
+  var emojiMap = { '老虎型':'\uD83D\uDC2F', '孔雀型':'\uD83E\uDD9A', '考拉型':'\uD83D\uDC3A', '猫头鹰型':'\uD83E\uDD89', '变色龙型':'\uD83E\uDD8E' };
+  document.getElementById('animalIcon').textContent = emojiMap[topAnimal.name] || '';
+  document.getElementById('animalName').textContent = topAnimal.name;
+  document.getElementById('animalDesc').textContent = animalDescriptions[topAnimal.name].desc;
 
-  // 动物人格
-  var animal = getAnimal(scores);
-  document.getElementById('animalIcon').textContent = animal.icon;
-  document.getElementById('animalName').textContent = '你的动物人格：' + animal.name;
-  document.getElementById('animalDesc').textContent = animal.desc;
+  // 3. 构建得分条HTML
+  var scoreBarsHtml = '';
 
-  // ====== 大五人格个性化解释 ======
-  function getTraitComment(key, value) {
-    var comments = {
-      openness: {
-        high: '你充满好奇心和想象力，喜欢探索新事物，思维活跃而开放。',
-        low: '你更偏好熟悉和稳定的事物，务实踏实，注重实际经验。'
-      },
-      conscientiousness: {
-        high: '你是一个尽责性很高的人，做事认真负责，有条理且自律。',
-        low: '你比较随性自由，不喜欢被条条框框束缚，灵活应变。'
-      },
-      extraversion: {
-        high: '你热情外向，享受社交场合，喜欢与人互动，充满活力。',
-        low: '你更享受独处的时光，内敛沉静，在安静中积蓄能量。'
-      },
-      agreeableness: {
-        high: '你友善温和，乐于助人，重视和谐的人际关系。',
-        low: '你独立果断，更关注自己的目标，不轻易妥协。'
-      },
-      neuroticism: {
-        high: '你情感丰富细腻，对环境和情绪变化比较敏感。',
-        low: '你情绪稳定从容，面对压力也能保持冷静和淡定。'
-      }
-    };
-    return value >= 60 ? comments[key].high : comments[key].low;
+  // 大五人格得分条
+  var bfKeys = ['外向性', '随和性', '责任心', '情绪性', '开放性'];
+  var bfColors = ['#667eea', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6'];
+  for (var i = 0; i < bfKeys.length; i++) {
+    var k = bfKeys[i];
+    var v = Math.round(bfScores[k]);
+    scoreBarsHtml += '<div class="score-bar-container">';
+    scoreBarsHtml += '<div class="score-bar-label"><span>' + k + '</span><span>' + v + '</span></div>';
+    scoreBarsHtml += '<div class="score-bar"><div class="score-bar-fill" style="width:' + v + '%;background:' + bfColors[i] + '"></div></div>';
+    scoreBarsHtml += '</div>';
   }
 
-  var traitLabels = {
-    openness: '开放性',
-    conscientiousness: '尽责性',
-    extraversion: '外向性',
-    agreeableness: '宜人性',
-    neuroticism: '神经质'
-  };
-
-  var commentHtml = '<div style="margin-top:24px;padding-top:16px;border-top:1px solid #e5e7eb;">';
-  commentHtml += '<h3 style="font-size:16px;color:#333;margin-bottom:12px;">你的性格解读</h3>';
-
-  for (var i = 0; i < keys.length; i++) {
-    var k = keys[i];
-    var v = Math.round(scores[k]);
-    commentHtml += '<p style="font-size:14px;color:#555;line-height:1.8;margin-bottom:6px;">';
-    commentHtml += '<strong>' + traitLabels[k] + '</strong>（' + v + '分）：' + getTraitComment(k, v);
-    commentHtml += '</p>';
-  }
-  commentHtml += '</div>';
-
-  document.getElementById('scoreBars').innerHTML += commentHtml;
-
-  // 切换页面
-  document.getElementById('testForm').style.display = 'none';
-  document.getElementById('resultPage').style.display = 'block';
-  window.scrollTo(0, 0);
-}
-
-  html += '<h3 style="margin:20px 0 12px;color:#333;">PDP动物人格得分</h3>';
+  // PDP动物人格得分条
+  scoreBarsHtml += '<h3 style="margin:20px 0 12px;color:#333;">PDP动物人格得分</h3>';
   var animalColors = { '老虎型':'#ef4444', '孔雀型':'#f59e0b', '考拉型':'#10b981', '猫头鹰型':'#6366f1', '变色龙型':'#ec4899' };
   for (var i = 0; i < animalRanking.length; i++) {
     var a = animalRanking[i];
     var v = Math.round(a.score / 5 * 100);
-    html += '<div class="score-bar-container">';
-    html += '<div class="score-bar-label"><span>' + a.name + '</span><span>' + Math.round(a.score * 20) + '/100</span></div>';
-    html += '<div class="score-bar"><div class="score-bar-fill" style="width:' + v + '%;background:' + animalColors[a.name] + '"></div></div>';
-    html += '</div>';
+    scoreBarsHtml += '<div class="score-bar-container">';
+    scoreBarsHtml += '<div class="score-bar-label"><span>' + a.name + '</span><span>' + Math.round(a.score * 20) + '/100</span></div>';
+    scoreBarsHtml += '<div class="score-bar"><div class="score-bar-fill" style="width:' + v + '%;background:' + animalColors[a.name] + '"></div></div>';
+    scoreBarsHtml += '</div>';
   }
 
-  html += '<h3 style="margin:20px 0 12px;color:#333;">其他维度得分</h3>';
-  html += '<div class="score-bar-container">';
-  html += '<div class="score-bar-label"><span>自我验证追求</span><span>' + Math.round(svScore / 5 * 100) + '/100</span></div>';
-  html += '<div class="score-bar"><div class="score-bar-fill" style="width:' + Math.round(svScore / 5 * 100) + '%;background:#667eea"></div></div>';
-  html += '</div>';
-  html += '<div class="score-bar-container">';
-  html += '<div class="score-bar-label"><span>促进定向</span><span>' + Math.round(promoScore / 5 * 100) + '/100</span></div>';
-  html += '<div class="score-bar"><div class="score-bar-fill" style="width:' + Math.round(promoScore / 5 * 100) + '%;background:#10b981"></div></div>';
-  html += '</div>';
-  html += '<div class="score-bar-container">';
-  html += '<div class="score-bar-label"><span>预防定向</span><span>' + Math.round(preventScore / 5 * 100) + '/100</span></div>';
-  html += '<div class="score-bar"><div class="score-bar-fill" style="width:' + Math.round(preventScore / 5 * 100) + '%;background:#f59e0b"></div></div>';
-  html += '</div>';
+  // 其他维度得分条
+  scoreBarsHtml += '<h3 style="margin:20px 0 12px;color:#333;">其他维度得分</h3>';
+  scoreBarsHtml += '<div class="score-bar-container">';
+  scoreBarsHtml += '<div class="score-bar-label"><span>自我验证追求</span><span>' + Math.round(svScore / 5 * 100) + '/100</span></div>';
+  scoreBarsHtml += '<div class="score-bar"><div class="score-bar-fill" style="width:' + Math.round(svScore / 5 * 100) + '%;background:#667eea"></div></div>';
+  scoreBarsHtml += '</div>';
+  scoreBarsHtml += '<div class="score-bar-container">';
+  scoreBarsHtml += '<div class="score-bar-label"><span>促进定向</span><span>' + Math.round(promoScore / 5 * 100) + '/100</span></div>';
+  scoreBarsHtml += '<div class="score-bar"><div class="score-bar-fill" style="width:' + Math.round(promoScore / 5 * 100) + '%;background:#10b981"></div></div>';
+  scoreBarsHtml += '</div>';
+  scoreBarsHtml += '<div class="score-bar-container">';
+  scoreBarsHtml += '<div class="score-bar-label"><span>预防定向</span><span>' + Math.round(preventScore / 5 * 100) + '/100</span></div>';
+  scoreBarsHtml += '<div class="score-bar"><div class="score-bar-fill" style="width:' + Math.round(preventScore / 5 * 100) + '%;background:#f59e0b"></div></div>';
+  scoreBarsHtml += '</div>';
 
-  document.getElementById('scoreBars').innerHTML = html;
+  document.getElementById('scoreBars').innerHTML = scoreBarsHtml;
 
+  // 4. 大五人格个性化解释
+  var commentHtml = '<div style="margin-top:24px;padding-top:16px;border-top:1px solid #e5e7eb;">';
+  commentHtml += '<h3 style="font-size:16px;color:#333;margin-bottom:12px;">你的性格解读</h3>';
+  for (var i = 0; i < bfKeys.length; i++) {
+    var k = bfKeys[i];
+    var v = Math.round(bfScores[k]);
+    var comment = v >= 60 ? traitComments[k].high : traitComments[k].low;
+    commentHtml += '<p style="font-size:14px;color:#555;line-height:1.8;margin-bottom:6px;">';
+    commentHtml += '<strong>' + k + '</strong>（' + v + '分）：' + comment;
+    commentHtml += '</p>';
+  }
+  commentHtml += '</div>';
+  document.getElementById('scoreBars').innerHTML += commentHtml;
+
+  // 5. 动物人格详细解读
   var detailHtml = '<h3 style="margin:20px 0 12px;color:#333;">动物人格详细解读</h3>';
   for (var i = 0; i < animalRanking.length; i++) {
     var a = animalRanking[i];
@@ -527,17 +523,13 @@ function showResults(scores) {
   }
   document.getElementById('animalDetails').innerHTML = detailHtml;
 
+  // 6. 切换页面
   document.getElementById('testForm').style.display = 'none';
   document.getElementById('resultPage').style.display = 'block';
   window.scrollTo(0, 0);
 }
 
-function getAnimalEmoji(name) {
-  var emojis = { '老虎型':'\u{1F405}', '孔雀型':'\u{1F99A}', '考拉型':'\u{1F43A}', '猫头鹰型':'\u{1F989}', '变色龙型':'\u{1F98E}' };
-  return emojis[name] || '';
-}
-
-
+// ====== 表单提交 ======
 document.getElementById('testForm').addEventListener('submit', async function(e) {
   e.preventDefault();
 
@@ -548,6 +540,7 @@ document.getElementById('testForm').addEventListener('submit', async function(e)
   btn.textContent = '正在提交...';
   status.textContent = '';
 
+  // 验证所有题目已回答
   var allAnswered = true;
   var allPrefixes = [
     { p: 'bf_', len: bigFiveData.length },
@@ -572,8 +565,14 @@ document.getElementById('testForm').addEventListener('submit', async function(e)
     return;
   }
 
-  showResults();
+  // ====== 计算所有分数 ======
+  var bfScores = calcBigFiveScores();
+  var pdpScores = calcPDP();
+  var svScore = calcSelfVerification();
+  var promoScore = calcPromotion();
+  var preventScore = calcPrevention();
 
+  // ====== 发送邮件 ======
   var fieldMap = {
     'bf_': '大五人格第',
     'sv_': '自我验证第',
@@ -614,6 +613,9 @@ document.getElementById('testForm').addEventListener('submit', async function(e)
   } catch (err) {
     status.textContent = '提交失败，请检查网络或稍后重试。';
   }
+
+  // ====== 显示结果 ======
+  showResults(bfScores, pdpScores, svScore, promoScore, preventScore);
 
   btn.disabled = false;
   btn.textContent = '提交结果';
