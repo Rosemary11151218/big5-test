@@ -423,33 +423,70 @@ function drawRadar(scores) {
 }
 
 
-function showResults() {
-  var bigFiveScores = calcBigFiveScores();
-  var svScore = calcSelfVerification();
-  var promoScore = calcPromotion();
-  var preventScore = calcPrevention();
-  var pdpScores = calcPDP();
-  var animalRanking = getAnimalResult(pdpScores);
+function showResults(scores) {
+  // 雷达图
+  drawRadar(scores);
 
-  drawRadar(bigFiveScores);
+  // 动物人格
+  var animal = getAnimal(scores);
+  document.getElementById('animalIcon').textContent = animal.icon;
+  document.getElementById('animalName').textContent = '你的动物人格：' + animal.name;
+  document.getElementById('animalDesc').textContent = animal.desc;
 
-  var mainAnimal = animalRanking[0];
-  var animalInfo = animalDescriptions[mainAnimal.name];
-  document.getElementById('animalIcon').textContent = getAnimalEmoji(mainAnimal.name);
-  document.getElementById('animalName').textContent = animalInfo.title;
-  document.getElementById('animalDesc').textContent = animalInfo.desc;
-
-  var colors = { '外向性':'#667eea', '随和性':'#10b981', '责任心':'#f59e0b', '情绪性':'#ec4899', '开放性':'#8b5cf6' };
-  var bfKeys = ['外向性', '随和性', '责任心', '情绪性', '开放性'];
-  var html = '<h3 style="margin:20px 0 12px;color:#333;">大五人格得分</h3>';
-  for (var i = 0; i < bfKeys.length; i++) {
-    var k = bfKeys[i];
-    var v = Math.round(bigFiveScores[k]);
-    html += '<div class="score-bar-container">';
-    html += '<div class="score-bar-label"><span>' + k + '</span><span>' + v + '</span></div>';
-    html += '<div class="score-bar"><div class="score-bar-fill" style="width:' + v + '%;background:' + colors[k] + '"></div></div>';
-    html += '</div>';
+  // ====== 大五人格个性化解释 ======
+  function getTraitComment(key, value) {
+    var comments = {
+      openness: {
+        high: '你充满好奇心和想象力，喜欢探索新事物，思维活跃而开放。',
+        low: '你更偏好熟悉和稳定的事物，务实踏实，注重实际经验。'
+      },
+      conscientiousness: {
+        high: '你是一个尽责性很高的人，做事认真负责，有条理且自律。',
+        low: '你比较随性自由，不喜欢被条条框框束缚，灵活应变。'
+      },
+      extraversion: {
+        high: '你热情外向，享受社交场合，喜欢与人互动，充满活力。',
+        low: '你更享受独处的时光，内敛沉静，在安静中积蓄能量。'
+      },
+      agreeableness: {
+        high: '你友善温和，乐于助人，重视和谐的人际关系。',
+        low: '你独立果断，更关注自己的目标，不轻易妥协。'
+      },
+      neuroticism: {
+        high: '你情感丰富细腻，对环境和情绪变化比较敏感。',
+        low: '你情绪稳定从容，面对压力也能保持冷静和淡定。'
+      }
+    };
+    return value >= 60 ? comments[key].high : comments[key].low;
   }
+
+  var traitLabels = {
+    openness: '开放性',
+    conscientiousness: '尽责性',
+    extraversion: '外向性',
+    agreeableness: '宜人性',
+    neuroticism: '神经质'
+  };
+
+  var commentHtml = '<div style="margin-top:24px;padding-top:16px;border-top:1px solid #e5e7eb;">';
+  commentHtml += '<h3 style="font-size:16px;color:#333;margin-bottom:12px;">你的性格解读</h3>';
+
+  for (var i = 0; i < keys.length; i++) {
+    var k = keys[i];
+    var v = Math.round(scores[k]);
+    commentHtml += '<p style="font-size:14px;color:#555;line-height:1.8;margin-bottom:6px;">';
+    commentHtml += '<strong>' + traitLabels[k] + '</strong>（' + v + '分）：' + getTraitComment(k, v);
+    commentHtml += '</p>';
+  }
+  commentHtml += '</div>';
+
+  document.getElementById('scoreBars').innerHTML += commentHtml;
+
+  // 切换页面
+  document.getElementById('testForm').style.display = 'none';
+  document.getElementById('resultPage').style.display = 'block';
+  window.scrollTo(0, 0);
+}
 
   html += '<h3 style="margin:20px 0 12px;color:#333;">PDP动物人格得分</h3>';
   var animalColors = { '老虎型':'#ef4444', '孔雀型':'#f59e0b', '考拉型':'#10b981', '猫头鹰型':'#6366f1', '变色龙型':'#ec4899' };
