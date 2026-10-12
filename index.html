@@ -441,7 +441,7 @@ function showResults() {
   }
 
   html += '<h3 style="margin:20px 0 12px;color:#333;">PDP动物人格得分</h3>';
-  var animalColors = { '老虎型':'#ef4444', '孔雀型':'#f59e0b', '考拉型':'#10b981', '猫头鹰型':'#6366f1', '变色龙型':'#ec4899' };
+  var animalColors = { '老虎':'#ef4444', '孔雀':'#f59e0b', '考拉':'#10b981', '猫头鹰':'#6366f1', '变色龙':'#ec4899' };
   for (var i = 0; i < animalRanking.length; i++) {
     var a = animalRanking[i];
     var v = Math.round(a.score / 5 * 100);
@@ -485,7 +485,7 @@ function showResults() {
 }
 
 function getAnimalEmoji(name) {
-  var emojis = { '老虎型':'\u{1F405}', '孔雀型':'\u{1F99A}', '考拉型':'\u{1F43A}', '猫头鹰型':'\u{1F989}', '变色龙型':'\u{1F98E}' };
+  var emojis = { '老虎':'\u{1F405}', '孔雀':'\u{1F99A}', '考拉':'\u{1F43A}', '猫头鹰':'\u{1F989}', '变色龙':'\u{1F98E}' };
   return emojis[name] || '';
 }
 
