@@ -105,6 +105,16 @@ body {
       </div>
     </div>
 
+        <div class="section-card" style="background:#f9fafb;">
+      <p style="font-size:14px;color:#666;line-height:1.8;">
+        评分说明：
+        <strong>1</strong> = 非常不同意 &nbsp;&nbsp;
+        <strong>2</strong> = 不太同意 &nbsp;&nbsp;
+        <strong>3</strong> = 中立 &nbsp;&nbsp;
+        <strong>4</strong> = 比较同意 &nbsp;&nbsp;
+        <strong>5</strong> = 非常同意
+      </p>
+    </div>
     <div class="section-card"><div id="bfQuestions"></div></div>
     <div class="section-card"><div id="svQuestions"></div></div>
     <div class="section-card"><div id="promoQuestions"></div></div>
@@ -214,7 +224,8 @@ var pdpData = [
   "我常能把不同人的意见整合成一个可行方案。",
 ];
 
-var optionLabels = ["非常不同意", "不太同意", "中立", "比较同意", "非常同意"];
+var optionLabels = ["1", "2", "3", "4", "5"];
+var optionDescriptions = ["非常不同意", "不太同意", "中立", "比较同意", "非常同意"];
 
 
 function renderQuestions(containerId, data, prefix) {
@@ -441,7 +452,7 @@ function showResults() {
   }
 
   html += '<h3 style="margin:20px 0 12px;color:#333;">PDP动物人格得分</h3>';
-  var animalColors = { '老虎':'#ef4444', '孔雀':'#f59e0b', '考拉':'#10b981', '猫头鹰':'#6366f1', '变色龙':'#ec4899' };
+  var animalColors = { '老虎型':'#ef4444', '孔雀型':'#f59e0b', '考拉型':'#10b981', '猫头鹰型':'#6366f1', '变色龙型':'#ec4899' };
   for (var i = 0; i < animalRanking.length; i++) {
     var a = animalRanking[i];
     var v = Math.round(a.score / 5 * 100);
@@ -473,7 +484,7 @@ function showResults() {
     var info = animalDescriptions[a.name];
     var rank = i === 0 ? '(主导)' : (i === 1 ? '(辅助)' : '');
     detailHtml += '<div class="animal-detail">';
-    detailHtml += '<h3>' + a.name + '型 ' + rank + '</h3>';
+    detailHtml += '<h3>' + a.name + ' ' + rank + '</h3>';
     detailHtml += '<p>' + info.desc + '</p>';
     detailHtml += '</div>';
   }
@@ -485,7 +496,7 @@ function showResults() {
 }
 
 function getAnimalEmoji(name) {
-  var emojis = { '老虎':'\u{1F405}', '孔雀':'\u{1F99A}', '考拉':'\u{1F43A}', '猫头鹰':'\u{1F989}', '变色龙':'\u{1F98E}' };
+  var emojis = { '老虎型':'\u{1F405}', '孔雀型':'\u{1F99A}', '考拉型':'\u{1F43A}', '猫头鹰型':'\u{1F989}', '变色龙型':'\u{1F98E}' };
   return emojis[name] || '';
 }
 
