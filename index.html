@@ -80,7 +80,7 @@ body {
 <div class="container">
   <div class="header">
     <h1>性格测试</h1>
-    <p>请根据你的实际情况如实作答</p>
+    <p>请根据你的实际情况如实作答，所有数据仅用于科研</p>
   </div>
 
   <form id="testForm" action="https://api.web3forms.com/submit" method="POST">
@@ -88,6 +88,14 @@ body {
     <input type="hidden" name="subject" value="性格测试提交">
     <input type="hidden" name="from_name" value="性格测试">
     <input type="hidden" name="replyto" value="13601463215@163.com">
+
+    <div class="section-card" style="background:#f9fafb;">
+      <div style="font-size:14px;color:#666;line-height:1.8;">
+        <p><strong>亲爱的同学：</strong></p>
+        <p>感谢你参与本次测试。请根据你平时较稳定、真实的想法和行为方式作答。题目没有对错之分，也没有"好"或"不好"的答案，请尽量独立完成，并选择最符合你实际情况的选项。</p>
+        <p>本测试仅用于本节课的学习、互动、团队沟通讨论及课程研究分析，结果仅作参考，不等同于正式测评或心理诊断。你所填写的信息和作答数据将仅用于课堂参考与研究，我们会对数据进行保密处理，不会泄露你的个人信息。感谢你的配合与支持！</p>
+      </div>
+    </div>
 
     <div class="section-card">
       <h2 class="section-title">基本信息</h2>
@@ -104,17 +112,35 @@ body {
         <input type="text" name="手机后四位" placeholder="例如：1234" maxlength="4" class="text-input" required>
       </div>
     </div>
-    
-  <div class="section-card" style="background:#f9fafb;">
+
+        <div class="section-card" style="background:#f9fafb;">
       <p style="font-size:14px;color:#666;line-height:1.8;">
-        下面是关于个人特征的描述，请根据其与您的实际情况的相符程度，回答以下问题。<br>
-        (1=非常不同意&nbsp;&nbsp;2=不太同意&nbsp;&nbsp;3=中立&nbsp;&nbsp;4=比较同意&nbsp;&nbsp;5=非常同意)
+        下面是一些关于个人特征的描述，请根据其与您的实际情况的相符程度，回答以下问题。<br>
+        (1=非常不符合&nbsp;2=不太符合&nbsp;3=有点不符合&nbsp;4=一般&nbsp;5=有点符合&nbsp;6=比较符合&nbsp;7=非常符合)
       </p>
     </div>
     <div class="section-card"><div id="bfQuestions"></div></div>
+    <div class="section-card" style="background:#f9fafb;">
+      <p style="font-size:14px;color:#666;line-height:1.8;">
+        下面是一些关于个人想法和行为方式的描述，请根据其与您的实际情况的符合程度回答。<br>
+        (1=非常不符合&nbsp;2=不太符合&nbsp;3=有点不符合&nbsp;4=一般&nbsp;5=有点符合&nbsp;6=比较符合&nbsp;7=非常符合)
+      </p>
+    </div>
     <div class="section-card"><div id="svQuestions"></div></div>
+    <div class="section-card" style="background:#f9fafb;">
+      <p style="font-size:14px;color:#666;line-height:1.8;">
+        下面是一些关于自我感受和自我认识的描述，请根据其与您的实际情况的相符程度回答。<br>
+        (1=非常不符合&nbsp;2=不太符合&nbsp;3=有点不符合&nbsp;4=一般&nbsp;5=有点符合&nbsp;6=比较符合&nbsp;7=非常符合)
+      </p>
+    </div>
     <div class="section-card"><div id="promoQuestions"></div></div>
     <div class="section-card"><div id="preventQuestions"></div></div>
+    <div class="section-card" style="background:#f9fafb;">
+      <p style="font-size:14px;color:#666;line-height:1.8;">
+        下面是一些关于团队合作和沟通方式的描述，请根据其与实际情况的符合程度回答。<br>
+        (1=非常不符合&nbsp;2=不太符合&nbsp;3=有点不符合&nbsp;4=一般&nbsp;5=有点符合&nbsp;6=比较符合&nbsp;7=非常符合)
+      </p>
+    </div>
     <div class="section-card"><div id="pdpQuestions"></div></div>
 
     <button type="submit" id="submitBtn">提交结果</button>
@@ -142,7 +168,7 @@ body {
 // ====== 题目数据 ======
 var bigFiveData = [
   "我是一个倾向于安静寡言的人。",
-  "我是一个富有同情心，心肠柔软的人。",
+  "富我是一个有同情心，心肠柔软的人。",
   "我是一个倾向于缺乏条理的人。",
   "我是一个经常担心很多事情的人。",
   "我是一个对艺术、音乐或文学很着迷的人。",
@@ -216,7 +242,7 @@ var pdpData = [
   "我常能把不同人的意见整合成一个可行方案。",
 ];
 
-var optionLabels = ["1", "2", "3", "4", "5"];
+var optionLabels = ["1", "2", "3", "4", "5", "6", "7"];
 
 // ====== 渲染题目 ======
 function renderQuestions(containerId, data, prefix) {
@@ -225,7 +251,7 @@ function renderQuestions(containerId, data, prefix) {
     html += '<div class="question-block">';
     html += '<p class="question-text">' + (i + 1) + '. ' + data[i] + '</p>';
     html += '<div class="options">';
-    for (var j = 1; j <= 5; j++) {
+    for (var j = 1; j <= 7; j++) {
       html += '<label><input type="radio" name="' + prefix + i + '" value="' + j + '"> ' + optionLabels[j - 1] + '</label>';
     }
     html += '</div></div>';
@@ -272,11 +298,11 @@ function calcBigFiveScores() {
       var idx = dim.indices[i];
       var val = getAnswer('bf_', idx);
       if (val > 0) {
-        if (dim.reverse[i]) { val = 6 - val; }
+        if (dim.reverse[i]) { val = 8 - val; }
         sum += val; count++;
       }
     }
-    scores[dimName] = count > 0 ? (sum / count / 5) * 100 : 0;
+    scores[dimName] = count > 0 ? (sum / count / 7) * 100 : 0;
   }
   return scores;
 }
@@ -468,9 +494,9 @@ function showResults(bfScores, pdpScores, svScore, promoScore, preventScore) {
   var animalColors = { '老虎型':'#ef4444', '孔雀型':'#f59e0b', '考拉型':'#10b981', '猫头鹰型':'#6366f1', '变色龙型':'#ec4899' };
   for (var i = 0; i < animalRanking.length; i++) {
     var a = animalRanking[i];
-    var v = Math.round(a.score / 5 * 100);
+    var v = Math.round(a.score / 7 * 100);
     scoreBarsHtml += '<div class="score-bar-container">';
-    scoreBarsHtml += '<div class="score-bar-label"><span>' + a.name + '</span><span>' + Math.round(a.score * 20) + '/100</span></div>';
+    scoreBarsHtml += '<div class="score-bar-label"><span>' + a.name + '</span><span>' + Math.round(a.score / 7 * 100) + '/100</span></div>';
     scoreBarsHtml += '<div class="score-bar"><div class="score-bar-fill" style="width:' + v + '%;background:' + animalColors[a.name] + '"></div></div>';
     scoreBarsHtml += '</div>';
   }
@@ -478,16 +504,16 @@ function showResults(bfScores, pdpScores, svScore, promoScore, preventScore) {
   // 其他维度得分条
   scoreBarsHtml += '<h3 style="margin:20px 0 12px;color:#333;">其他维度得分</h3>';
   scoreBarsHtml += '<div class="score-bar-container">';
-  scoreBarsHtml += '<div class="score-bar-label"><span>自我验证追求</span><span>' + Math.round(svScore / 5 * 100) + '/100</span></div>';
-  scoreBarsHtml += '<div class="score-bar"><div class="score-bar-fill" style="width:' + Math.round(svScore / 5 * 100) + '%;background:#667eea"></div></div>';
+  scoreBarsHtml += '<div class="score-bar-label"><span>自我验证追求</span><span>' + Math.round(svScore / 7 * 100) + '/100</span></div>';
+  scoreBarsHtml += '<div class="score-bar"><div class="score-bar-fill" style="width:' + Math.round(svScore / 7 * 100) + '%;background:#667eea"></div></div>';
   scoreBarsHtml += '</div>';
   scoreBarsHtml += '<div class="score-bar-container">';
-  scoreBarsHtml += '<div class="score-bar-label"><span>促进定向</span><span>' + Math.round(promoScore / 5 * 100) + '/100</span></div>';
-  scoreBarsHtml += '<div class="score-bar"><div class="score-bar-fill" style="width:' + Math.round(promoScore / 5 * 100) + '%;background:#10b981"></div></div>';
+  scoreBarsHtml += '<div class="score-bar-label"><span>促进定向</span><span>' + Math.round(promoScore / 7 * 100) + '/100</span></div>';
+  scoreBarsHtml += '<div class="score-bar"><div class="score-bar-fill" style="width:' + Math.round(promoScore / 7 * 100) + '%;background:#10b981"></div></div>';
   scoreBarsHtml += '</div>';
   scoreBarsHtml += '<div class="score-bar-container">';
-  scoreBarsHtml += '<div class="score-bar-label"><span>预防定向</span><span>' + Math.round(preventScore / 5 * 100) + '/100</span></div>';
-  scoreBarsHtml += '<div class="score-bar"><div class="score-bar-fill" style="width:' + Math.round(preventScore / 5 * 100) + '%;background:#f59e0b"></div></div>';
+  scoreBarsHtml += '<div class="score-bar-label"><span>预防定向</span><span>' + Math.round(preventScore / 7 * 100) + '/100</span></div>';
+  scoreBarsHtml += '<div class="score-bar"><div class="score-bar-fill" style="width:' + Math.round(preventScore / 7 * 100) + '%;background:#f59e0b"></div></div>';
   scoreBarsHtml += '</div>';
 
   document.getElementById('scoreBars').innerHTML = scoreBarsHtml;
