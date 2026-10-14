@@ -270,7 +270,7 @@ var bigFiveDimensions = {
   '外向性': { indices: [0,5,10,15,20,25], reverse: [true,false,false,false,true,true] },
   '随和性': { indices: [1,6,11,16,21,26], reverse: [false,true,false,true,false,true] },
   '责任心': { indices: [2,7,12,17,22,27], reverse: [true,true,false,false,false,true] },
-  '情绪性': { indices: [3,8,13,18,23,28], reverse: [false,false,true,true,true,false] },
+  '情绪稳定性': { indices: [3,8,13,18,23,28], reverse: [true,true,false,false,false,ture] },
   '开放性': { indices: [4,9,14,19,24,29], reverse: [false,true,false,true,false,true] }
 };
 
@@ -367,9 +367,9 @@ var traitComments = {
     high: '你是一个责任心很高的人，做事认真负责，有条理且自律。',
     low: '你比较随性自由，不喜欢被条条框框束缚，灵活应变。'
   },
-  '情绪性': {
-    high: '你情感丰富细腻，对环境和情绪变化比较敏感。',
-    low: '你情绪稳定从容，面对压力也能保持冷静和淡定。'
+  '情绪稳定性': {
+    high: '你情绪稳定从容，面对压力也能保持冷静和淡定。',
+    low: '你情感丰富细腻，对环境和情绪变化比较敏感。'
   },
   '开放性': {
     high: '你充满好奇心和想象力，喜欢探索新事物，思维活跃而开放。',
@@ -385,8 +385,8 @@ function drawRadar(scores) {
   var cx = W / 2, cy = H / 2, R = Math.min(cx, cy) - 50;
   ctx.clearRect(0, 0, W, H);
 
-  var labels = ['外向性', '随和性', '责任心', '情绪性', '开放性'];
-  var keys = ['外向性', '随和性', '责任心', '情绪性', '开放性'];
+ var labels = ['外向性', '随和性', '责任心', '情绪稳定性', '开放性'];
+var keys = ['外向性', '随和性', '责任心', '情绪稳定性', '开放性'];
   var n = 5;
 
   // 画背景网格
@@ -405,7 +405,7 @@ function drawRadar(scores) {
     ctx.stroke();
   }
 
-  // 画轴线和标签
+  // 画轴线和维度名称标签
   for (var i = 0; i < n; i++) {
     var angle = (Math.PI * 2 * i / n) - Math.PI / 2;
     var x = cx + R * Math.cos(angle);
@@ -444,13 +444,16 @@ function drawRadar(scores) {
   ctx.lineWidth = 2.5;
   ctx.stroke();
 
-  // 画数据点
+  // 画数据点 + 在顶点旁绘制分数【新增代码】
   for (var i = 0; i < n; i++) {
     var angle = (Math.PI * 2 * i / n) - Math.PI / 2;
+    var scoreVal = Math.round(scores[keys[i]]);
     var val = Math.min(scores[keys[i]] / 100, 1);
     var r = R * val;
     var x = cx + r * Math.cos(angle);
     var y = cy + r * Math.sin(angle);
+
+    // 圆点
     ctx.beginPath();
     ctx.arc(x, y, 5, 0, Math.PI * 2);
     ctx.fillStyle = '#667eea';
@@ -458,8 +461,19 @@ function drawRadar(scores) {
     ctx.strokeStyle = '#fff';
     ctx.lineWidth = 2;
     ctx.stroke();
+
+    // 在圆点外侧偏移一点，写分数
+    var offset = 12; // 文字离圆点距离，调大可拉开
+    var textX = x + offset * Math.cos(angle);
+    var textY = y + offset * Math.sin(angle);
+    ctx.fillStyle = '#333';
+    ctx.font = 'bold 13px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(scoreVal.toString(), textX, textY);
   }
 }
+
 
 // ====== 显示结果 ======
 function showResults(bfScores, pdpScores, svScore, promoScore, preventScore) {
@@ -486,19 +500,6 @@ function showResults(bfScores, pdpScores, svScore, promoScore, preventScore) {
       scoreBarsHtml += '<div class="score-bar-container">';
       scoreBarsHtml += '<div class="score-bar-label"><span>' + a.name + '</span><span>' + Math.round(a.score / 7 * 100) + '/100</span></div>';
       scoreBarsHtml += '<div class="score-bar"><div class="score-bar-fill" style="width:' + v + '%;background:' + animalColors[a.name] + '"></div></div>';
-      scoreBarsHtml += '</div>';
-    }
-
-    // ===== 再渲染大五人格得分条 =====
-    var bfKeys = ['外向性', '随和性', '责任心', '情绪性', '开放性'];
-    var bfColors = ['#667eea', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6'];
-    scoreBarsHtml += '<h3 style="margin:20px 0 12px;color:#333;">大五人格得分</h3>';
-    for (var i = 0; i < bfKeys.length; i++) {
-      var k = bfKeys[i];
-      var v = Math.round(bfScores[k]);
-      scoreBarsHtml += '<div class="score-bar-container">';
-      scoreBarsHtml += '<div class="score-bar-label"><span>' + k + '</span><span>' + v + '</span></div>';
-      scoreBarsHtml += '<div class="score-bar"><div class="score-bar-fill" style="width:' + v + '%;background:' + bfColors[i] + '"></div></div>';
       scoreBarsHtml += '</div>';
     }
 
