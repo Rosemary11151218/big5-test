@@ -477,18 +477,6 @@ function showResults(bfScores, pdpScores, svScore, promoScore, preventScore) {
   // 3. 构建得分条HTML
   var scoreBarsHtml = '';
 
-  // 大五人格得分条
-  var bfKeys = ['外向性', '随和性', '责任心', '情绪性', '开放性'];
-  var bfColors = ['#667eea', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6'];
-  for (var i = 0; i < bfKeys.length; i++) {
-    var k = bfKeys[i];
-    var v = Math.round(bfScores[k]);
-    scoreBarsHtml += '<div class="score-bar-container">';
-    scoreBarsHtml += '<div class="score-bar-label"><span>' + k + '</span><span>' + v + '</span></div>';
-    scoreBarsHtml += '<div class="score-bar"><div class="score-bar-fill" style="width:' + v + '%;background:' + bfColors[i] + '"></div></div>';
-    scoreBarsHtml += '</div>';
-  }
-
   // PDP动物人格得分条
   scoreBarsHtml += '<h3 style="margin:20px 0 12px;color:#333;">PDP动物人格得分</h3>';
   var animalColors = { '老虎型':'#ef4444', '孔雀型':'#f59e0b', '考拉型':'#10b981', '猫头鹰型':'#6366f1', '变色龙型':'#ec4899' };
@@ -500,23 +488,18 @@ function showResults(bfScores, pdpScores, svScore, promoScore, preventScore) {
     scoreBarsHtml += '<div class="score-bar"><div class="score-bar-fill" style="width:' + v + '%;background:' + animalColors[a.name] + '"></div></div>';
     scoreBarsHtml += '</div>';
   }
-
-  // 其他维度得分条
-  scoreBarsHtml += '<h3 style="margin:20px 0 12px;color:#333;">其他维度得分</h3>';
-  scoreBarsHtml += '<div class="score-bar-container">';
-  scoreBarsHtml += '<div class="score-bar-label"><span>自我验证追求</span><span>' + Math.round(svScore / 7 * 100) + '/100</span></div>';
-  scoreBarsHtml += '<div class="score-bar"><div class="score-bar-fill" style="width:' + Math.round(svScore / 7 * 100) + '%;background:#667eea"></div></div>';
-  scoreBarsHtml += '</div>';
-  scoreBarsHtml += '<div class="score-bar-container">';
-  scoreBarsHtml += '<div class="score-bar-label"><span>促进定向</span><span>' + Math.round(promoScore / 7 * 100) + '/100</span></div>';
-  scoreBarsHtml += '<div class="score-bar"><div class="score-bar-fill" style="width:' + Math.round(promoScore / 7 * 100) + '%;background:#10b981"></div></div>';
-  scoreBarsHtml += '</div>';
-  scoreBarsHtml += '<div class="score-bar-container">';
-  scoreBarsHtml += '<div class="score-bar-label"><span>预防定向</span><span>' + Math.round(preventScore / 7 * 100) + '/100</span></div>';
-  scoreBarsHtml += '<div class="score-bar"><div class="score-bar-fill" style="width:' + Math.round(preventScore / 7 * 100) + '%;background:#f59e0b"></div></div>';
-  scoreBarsHtml += '</div>';
-
-  document.getElementById('scoreBars').innerHTML = scoreBarsHtml;
+  
+  // 大五人格得分条
+  var bfKeys = ['外向性', '随和性', '责任心', '情绪性', '开放性'];
+  var bfColors = ['#667eea', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6'];
+  for (var i = 0; i < bfKeys.length; i++) {
+    var k = bfKeys[i];
+    var v = Math.round(bfScores[k]);
+    scoreBarsHtml += '<div class="score-bar-container">';
+    scoreBarsHtml += '<div class="score-bar-label"><span>' + k + '</span><span>' + v + '</span></div>';
+    scoreBarsHtml += '<div class="score-bar"><div class="score-bar-fill" style="width:' + v + '%;background:' + bfColors[i] + '"></div></div>';
+    scoreBarsHtml += '</div>';
+  }
 
   // 4. 大五人格个性化解释
   var commentHtml = '<div style="margin-top:24px;padding-top:16px;border-top:1px solid #e5e7eb;">';
